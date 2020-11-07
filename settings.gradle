@@ -1,0 +1,3 @@
+include ':ZHtouchs'
+include ':app'
+rootProject.name = "MyDemo"
