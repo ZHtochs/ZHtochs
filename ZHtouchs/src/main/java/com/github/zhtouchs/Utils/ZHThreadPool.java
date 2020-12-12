@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-enum ZHThreadPool {
+public enum ZHThreadPool {
     INSTANCE;
     private static final String TAG = "ZHThreadPool";
 

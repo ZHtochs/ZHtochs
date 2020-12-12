@@ -16,12 +16,12 @@ public class DrawerLayoutUtil {
     private DrawerLayoutUtil() {
     }
 
-    public static void setDrawerLeftEdgeSize(@NonNull Activity activity, @NonNull DrawerLayout drawerLayout, double displayWidthPercentage) {
+    public static void setDrawerEdgeSize(@NonNull Activity activity, @NonNull DrawerLayout drawerLayout, double displayWidthPercentage) {
         setDrawerLeftEdgeSize(activity, drawerLayout, displayWidthPercentage, Gravity.LEFT);
         setDrawerLeftEdgeSize(activity, drawerLayout, displayWidthPercentage, Gravity.RIGHT);
     }
 
-    private static void setDrawerLeftEdgeSize(@NonNull Activity activity, @NonNull DrawerLayout drawerLayout, double displayWidthPercentage, int gravityDic) {
+    public static void setDrawerLeftEdgeSize(@NonNull Activity activity, @NonNull DrawerLayout drawerLayout, double displayWidthPercentage, int gravityDic) {
         try {
             String draggerFieldName;
             String leftCallbackFieldName;
