@@ -1,7 +1,6 @@
 package com.github.zhtouchs;
 
 import android.app.Activity;
-import android.app.VoiceInteractor;
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -10,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public enum ActivityManager {
+public enum ZHActivityManager {
     INSTANCE;
     private Context context;
-    private List<WeakReference<Activity>> weakReferenceList = new ArrayList<>();
+    private final List<WeakReference<Activity>> weakReferenceList = new ArrayList<>();
 
     public Context getContext() {
         return context;

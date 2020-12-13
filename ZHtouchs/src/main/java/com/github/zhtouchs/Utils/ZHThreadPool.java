@@ -25,13 +25,11 @@ public enum ZHThreadPool {
     private static final ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
 
     public void execute(String tag, Runnable runnable) {
-        ZHLog.d(TAG, "execute:" + tag);
-        threadPool.execute(runnable);
+        threadPool.execute(new WarpRunable(tag, runnable));
     }
 
     public void executeSingle(String tag, Runnable runnable) {
-        ZHLog.d(TAG, "executeSingle:" + tag);
-        singleThreadPool.execute(runnable);
+        singleThreadPool.execute(new WarpRunable(tag, runnable));
     }
 
     public Future execute(String tag, Callable callable) {
@@ -52,5 +50,24 @@ public enum ZHThreadPool {
     public void runOnUi(String tag, long delay, Runnable runnable) {
         ZHLog.d(TAG, "runOnUi:" + tag);
         handler.postDelayed(runnable, delay);
+    }
+
+
+    private static class WarpRunable implements Runnable {
+        String name;
+        Runnable runnable;
+
+        public WarpRunable(String name, Runnable runnable) {
+            this.name = name;
+            this.runnable = runnable;
+        }
+
+        @Override
+        public void run() {
+            Thread thread = Thread.currentThread();
+            thread.setName(name);
+            ZHLog.d(TAG, "current thread:" + name);
+            runnable.run();
+        }
     }
 }

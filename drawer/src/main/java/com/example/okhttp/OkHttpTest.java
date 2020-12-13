@@ -1,21 +1,18 @@
 package com.example.okhttp;
 
 import com.github.zhtouchs.Utils.ZHLog;
-import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class OkHttpTest {
     public static final String URL = "http://192.168.1.108:9102";
@@ -25,41 +22,55 @@ public class OkHttpTest {
     private OkHttpTest() {
     }
 
-    public static List<GetTextItem> loadJson(String urlString) {
-        try {
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(10000);
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Accept-Language", " zh-CN,zh;q=0.9,en;q=0.8");
-            connection.setRequestProperty("Accept", "*/*");
-            connection.connect();
-            int request = connection.getResponseCode();
-            ZHLog.d(TAG, request);
-            if (request == 200) {
-                Map<String, List<String>> map = connection.getHeaderFields();
-                for (String key : map.keySet()) {
-                    ZHLog.d(TAG, "key:" + key + " value:" + map.get(key));
-                }
+    public static void okGet(String urlString, OkHttpCallBack callBack) {
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(1000, TimeUnit.MILLISECONDS)
+                .build();
+
+        Request request = new Request.Builder()
+                .get()
+                .url(urlString)
+                .build();
+        Call task = okHttpClient.newCall(request);
+        task.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                ZHLog.d(TAG, "onFailure" + e.getMessage());
             }
-            ZHLog.d(TAG, "length:" + connection.getContentLength());
-            InputStream inputStream = connection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String text = bufferedReader.readLine();
-            JSONObject jsonObject = new JSONObject(text);
-            JSONArray jsonArray = jsonObject.optJSONArray("data");
-            List<GetTextItem> list = new ArrayList<>();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject object = (JSONObject) jsonArray.get(i);
-                list.add(new Gson().fromJson(object.toString(), GetTextItem.class));
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                ZHLog.d(TAG, "onResponse:" + response.code());
+                callBack.onResponse(response);
             }
-            return list;
-        } catch (IOException e) {
-            ZHLog.d(TAG, "IOException:" + e.getMessage());
-        } catch (JSONException e) {
-            ZHLog.d(TAG, "JSONException:" + e.getMessage());
-        }
-        return null;
+        });
+    }
+
+    public static void okPost(String urlString,RequestBody requestBody, OkHttpCallBack callBack) {
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(1000, TimeUnit.MILLISECONDS)
+                .build();
+        Request request = new Request.Builder()
+                .post(requestBody)
+                .url(urlString)
+                .build();
+        Call task = okHttpClient.newCall(request);
+        task.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                ZHLog.d(TAG, "onFailure" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                ZHLog.d(TAG, "onResponse:" + response.code());
+                callBack.onResponse(response);
+            }
+        });
+    }
+
+    public interface OkHttpCallBack {
+        void onResponse(@NotNull Response response);
     }
 
 }

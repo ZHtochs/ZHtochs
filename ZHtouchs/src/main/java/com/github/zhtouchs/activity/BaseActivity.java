@@ -5,14 +5,14 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.zhtouchs.ActivityManager;
+import com.github.zhtouchs.ZHActivityManager;
 
 public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityManager.INSTANCE.addActivity(this);
+        ZHActivityManager.INSTANCE.addActivity(this);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityManager.INSTANCE.removeActivity(this.getClass().getName());
+        ZHActivityManager.INSTANCE.removeActivity(this.getClass().getName());
     }
 
     protected void setLifecycleObserver(ZHLifeObserver lifecycleObserver) {
