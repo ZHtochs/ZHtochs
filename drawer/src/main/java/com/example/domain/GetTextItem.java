@@ -1,33 +1,12 @@
 package com.example.domain;
 
+import java.util.Date;
+import java.util.Random;
+
 public class GetTextItem {
-
-
-    /**
-     * id : 1333029420651540480
-     * title : Android加载大图片，解决OOM问题
-     * viewCount : 221
-     * commentCount : 54
-     * publishTime : 2020-11-29T12:45:55.029+0000
-     * userName : 程序员拉大锯
-     * cover : /imgs/5.png
-     */
-
-    private String id;
     private String title;
-    private int viewCount;
-    private int commentCount;
     private String publishTime;
-    private String userName;
     private String cover;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getTitle() {
         return title;
@@ -37,36 +16,12 @@ public class GetTextItem {
         this.title = title;
     }
 
-    public int getViewCount() {
-        return viewCount;
-    }
-
-    public void setViewCount(int viewCount) {
-        this.viewCount = viewCount;
-    }
-
-    public int getCommentCount() {
-        return commentCount;
-    }
-
-    public void setCommentCount(int commentCount) {
-        this.commentCount = commentCount;
-    }
-
     public String getPublishTime() {
         return publishTime;
     }
 
     public void setPublishTime(String publishTime) {
         this.publishTime = publishTime;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public String getCover() {
@@ -80,13 +35,17 @@ public class GetTextItem {
     @Override
     public String toString() {
         return "GetTextItem{" +
-                "id='" + id + '\'' +
-                ", title='" + title + '\'' +
-                ", viewCount=" + viewCount +
-                ", commentCount=" + commentCount +
+                "title='" + title + '\'' +
                 ", publishTime='" + publishTime + '\'' +
-                ", userName='" + userName + '\'' +
                 ", cover='" + cover + '\'' +
                 '}';
+    }
+
+    public static GetTextItem getTextItemCreator() {
+        GetTextItem getTextItem = new GetTextItem();
+        getTextItem.setCover("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3610495421,999937044&fm=26&gp=0.jpg");
+        getTextItem.setPublishTime("" + new Random().nextInt(1000));
+        getTextItem.setTitle("" + new Date().toString());
+        return getTextItem;
     }
 }

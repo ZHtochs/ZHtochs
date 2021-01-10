@@ -4,71 +4,63 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.drawer.R;
-import com.example.okhttp.Adapter;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.domain.GetTextItem;
-import com.example.okhttp.OkHttpTest;
-import com.github.zhtouchs.ZHActivityManager;
+import com.example.drawer.R;
 import com.github.zhtouchs.Utils.ZHLog;
-import com.github.zhtouchs.Utils.ZHThreadPool;
-import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-public class GalleryFragment extends Fragment{
+public class GalleryFragment extends Fragment {
 
     private static final String TAG = "GalleryFragment";
 
-    private GalleryViewModel galleryViewModel;
-
     private RecyclerView recyclerView;
 
-    private final List<GetTextItem> getTextItem=new ArrayList<>();
+    private final List<GetTextItem> getTextItem = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
-        galleryViewModel =
-                new ViewModelProvider(this).get(GalleryViewModel.class);
         View root = inflater.inflate(R.layout.fragment_gallery, container, false);
-        Button button = root.findViewById(R.id.load_button);
         recyclerView = root.findViewById(R.id.recycle);
-
-        button.setOnClickListener(v -> OkHttpTest.okGet(OkHttpTest.URL + "/get/text", response -> {
-            try {
-                String text = response.body().string();
-                ZHLog.d(TAG, "123:" + text);
-                JSONObject jsonObject = new JSONObject(text);
-                JSONArray jsonArray = jsonObject.optJSONArray("data");
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject object = (JSONObject) jsonArray.get(i);
-                    getTextItem.add(new Gson().fromJson(object.toString(), GetTextItem.class));
+        for (int i = 0; i < 10; i++) {
+            getTextItem.add(GetTextItem.getTextItemCreator());
+        }
+        MyAdapter myAdapter = new MyAdapter(R.layout.cardview, getTextItem);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(myAdapter);
+        myAdapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
+        myAdapter.isFirstOnly(false);
+        myAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+            @Override
+            public void onLoadMoreRequested() {
+                int i = new Random().nextInt(3);
+                ZHLog.d(TAG, "onLoadMoreRequested:" + i);
+                if (i == 0) {
+                    //数据全部加载完毕
+                    myAdapter.loadMoreEnd();
                 }
-                ZHThreadPool.INSTANCE.runOnUi(TAG, () -> {
-                    recyclerView.setLayoutManager(new LinearLayoutManager(ZHActivityManager.INSTANCE.getContext()));
-                    Adapter adapter = new Adapter();
-                    adapter.setGetTextItems(getTextItem);
-                    recyclerView.setAdapter(adapter);
-                });
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
+                if (i == 1) {
+                    for (int j = 0; j < 10; j++) {
+                        myAdapter.addData(GetTextItem.getTextItemCreator());
+                    }
+                    myAdapter.loadMoreComplete();
+                }
+                if (i == 2) {
+                    myAdapter.loadMoreFail();
+                }
             }
-        }));
+        }, recyclerView);
         return root;
     }
-
 }
