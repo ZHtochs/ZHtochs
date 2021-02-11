@@ -48,13 +48,8 @@ public class MainActivity extends AppCompatActivity {
                 ZHLog.d(TAG, "onDestinationChanged:" + destination.getDisplayName());
             }
         });
-
-        initViewModel();
     }
 
-    private void initViewModel() {
-        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        ZHLog.d(TAG, "homeViewModel:" + homeViewModel);
-    }
+
 
 }
