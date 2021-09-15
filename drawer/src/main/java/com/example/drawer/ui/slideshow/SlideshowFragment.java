@@ -4,34 +4,34 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
+import android.widget.GridView;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import com.example.drawer.R;
+import com.example.drawer.databinding.FragmentSlideshowBinding;
+import com.example.drawer.ui.gallery.beans.ImageBean;
+
+import java.util.ArrayList;
 
 public class SlideshowFragment extends Fragment {
 
-    private SlideshowViewModel slideshowViewModel;
+    public static final String URL = "https://avatar.csdnimg.cn/2/A/5/1_u014803950.jpg";
+    public static final String URL2 = "https://csdnimg.cn/medal/chizhiyiheng@240.png";
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        slideshowViewModel =
-                new ViewModelProvider(this).get(SlideshowViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_slideshow, container, false);
-        final TextView textView = root.findViewById(R.id.text_slideshow);
-        slideshowViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+        FragmentSlideshowBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_slideshow, container, false);
+        GridView gridView = binding.gridView;
 
-        return root;
+        ArrayList<ImageBean> itemBeans = new ArrayList<>();
+        itemBeans.add(new ImageBean(URL));
+        itemBeans.add(new ImageBean(URL2));
+        itemBeans.add(new ImageBean(URL));
+        itemBeans.add(new ImageBean(URL2));
+        GridAdapter myAdapter = new GridAdapter(itemBeans);
+        gridView.setAdapter(myAdapter);
+        return binding.getRoot();
     }
 }

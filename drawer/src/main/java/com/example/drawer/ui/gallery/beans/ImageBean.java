@@ -14,6 +14,11 @@ public class ImageBean extends ItemBean {
         this.imageUrl = imageUrl;
     }
 
+    public ImageBean(String imageUrl) {
+        super("", "");
+        this.imageUrl = imageUrl;
+    }
+
     public String getImageUrl() {
         return imageUrl;
     }

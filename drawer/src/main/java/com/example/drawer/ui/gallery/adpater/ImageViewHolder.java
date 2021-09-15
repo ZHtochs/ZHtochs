@@ -27,7 +27,6 @@ public class ImageViewHolder extends BaseViewHolder {
     public ImageViewHolder(ItemWithImageBinding itemWithImageBinding) {
         super(itemWithImageBinding.getRoot());
         viewDataBinding = itemWithImageBinding;
-
     }
 
     @BindingAdapter("imageUrl")
