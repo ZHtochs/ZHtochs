@@ -3,35 +3,37 @@ package com.example.drawer.ui.home;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
-import com.bumptech.glide.Glide;
 import com.example.domain.CommentItem;
 import com.example.drawer.R;
 import com.example.okhttp.OkHttpTest;
-import com.github.zhtouchs.ZHActivityManager;
 import com.github.zhtouchs.Utils.ZHLog;
+import com.github.zhtouchs.ZHActivityManager;
+import com.github.zhtouchs.rxjava.disposables.Disposable;
+import com.github.zhtouchs.rxjava.observable.Observable;
+import com.github.zhtouchs.rxjava.observable.ObservableEmitter;
+import com.github.zhtouchs.rxjava.observable.ObservableOnSubscribe;
+import com.github.zhtouchs.rxjava.schedulers.Schedulers;
 import com.google.gson.Gson;
-
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import java.util.function.Consumer;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "HomeFragment";
@@ -58,7 +60,25 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_get:
-                Glide.with(v.getContext()).load(urlString).into(imageView);
+                Disposable disposable = Observable.create(new ObservableOnSubscribe<String>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                                ZHLog.i(TAG, "subscribe");
+                                emitter.onNext("123");
+                                emitter.onNext("asd");
+                                emitter.onComplete();
+                            }
+                        }).subscribeOn(Schedulers.IO)
+                        .observeOn(Schedulers.NEW_THREAD)
+                        .subscribe(new Consumer<String>() {
+                            @Override
+                            public void accept(String s) {
+                                ZHLog.i(TAG, "accept " + s);
+                            }
+                        });
+                ZHLog.d(TAG, disposable.hashCode());
+                SystemClock.sleep(300);
+                disposable.dispose();
                 break;
             case R.id.button_post:
                 CommentItem commentItem = new CommentItem("12313213", "辣是真的牛皮");
