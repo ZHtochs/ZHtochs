@@ -15,13 +15,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.domain.CommentItem;
 import com.example.drawer.R;
 import com.example.okhttp.OkHttpTest;
+import com.github.zhtouchs.AsycTask;
 import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.ZHActivityManager;
-import com.github.zhtouchs.rxjava.disposables.Disposable;
-import com.github.zhtouchs.rxjava.observable.Observable;
-import com.github.zhtouchs.rxjava.observable.ObservableEmitter;
-import com.github.zhtouchs.rxjava.observable.ObservableOnSubscribe;
-import com.github.zhtouchs.rxjava.schedulers.Schedulers;
 import com.google.gson.Gson;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -33,7 +29,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.function.Consumer;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "HomeFragment";
@@ -60,25 +55,29 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_get:
-                Disposable disposable = Observable.create(new ObservableOnSubscribe<String>() {
-                            @Override
-                            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
-                                ZHLog.i(TAG, "subscribe");
-                                emitter.onNext("123");
-                                emitter.onNext("asd");
-                                emitter.onComplete();
-                            }
-                        }).subscribeOn(Schedulers.IO)
-                        .observeOn(Schedulers.NEW_THREAD)
-                        .subscribe(new Consumer<String>() {
-                            @Override
-                            public void accept(String s) {
-                                ZHLog.i(TAG, "accept " + s);
-                            }
-                        });
-                ZHLog.d(TAG, disposable.hashCode());
-                SystemClock.sleep(300);
-                disposable.dispose();
+                AsycTask<String> asycTask = new AsycTask<String>().addObserver(new AsycTask.Observer<String>() {
+                    @Override
+                    public void onError(Throwable throwable) {
+                        ZHLog.d(TAG, "Observer onError " + throwable.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        ZHLog.d(TAG, "Observer onNext " + s);
+
+                    }
+                }).SubscribeOn(new AsycTask.Subscriber<String>() {
+                    @Override
+                    public void Subscribe(AsycTask<? super String> task) throws Throwable {
+                        task.onNext("123");
+                        ZHLog.d(TAG, "Subscribe onNext 123");
+                        SystemClock.sleep(200);
+                        task.onNext("456");
+                        ZHLog.d(TAG, "Subscribe onNext 456");
+                        SystemClock.sleep(200);
+                        throw new IllegalAccessException("qwer");
+                    }
+                });
                 break;
             case R.id.button_post:
                 CommentItem commentItem = new CommentItem("12313213", "辣是真的牛皮");
