@@ -3,7 +3,6 @@ package com.example.drawer.ui.home;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +14,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.domain.CommentItem;
 import com.example.drawer.R;
 import com.example.okhttp.OkHttpTest;
-import com.github.zhtouchs.AsycTask;
 import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.ZHActivityManager;
+import com.github.zhtouchs.ZHAsyncTask;
 import com.google.gson.Gson;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -55,27 +54,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_get:
-                AsycTask<String> asycTask = new AsycTask<String>().addObserver(new AsycTask.Observer<String>() {
+                ZHAsyncTask.create(new ZHAsyncTask.Subscriber<String>() {
+                    @Override
+                    public void subscribe(ZHAsyncTask<? super String> tAsycTask) throws Throwable {
+                        ZHLog.d(TAG, "subscribe");
+                        tAsycTask.onNext("123");
+                    }
+                }).addObserver(new ZHAsyncTask.Observer<String>() {
                     @Override
                     public void onError(Throwable throwable) {
-                        ZHLog.d(TAG, "Observer onError " + throwable.getMessage());
+
                     }
 
                     @Override
                     public void onNext(String s) {
-                        ZHLog.d(TAG, "Observer onNext " + s);
-
-                    }
-                }).SubscribeOn(new AsycTask.Subscriber<String>() {
-                    @Override
-                    public void Subscribe(AsycTask<? super String> task) throws Throwable {
-                        task.onNext("123");
-                        ZHLog.d(TAG, "Subscribe onNext 123");
-                        SystemClock.sleep(200);
-                        task.onNext("456");
-                        ZHLog.d(TAG, "Subscribe onNext 456");
-                        SystemClock.sleep(200);
-                        throw new IllegalAccessException("qwer");
+                        ZHLog.d(TAG, "onNext" + s);
                     }
                 });
                 break;
