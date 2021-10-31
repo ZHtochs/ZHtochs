@@ -2,21 +2,16 @@ package com.example.drawer;
 
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.View;
-
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
 import com.github.zhtouchs.Utils.DrawerLayoutUtil;
 import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.activity.BaseActivity;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends BaseActivity {
 
@@ -36,7 +31,7 @@ public class MainActivity extends BaseActivity {
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.menu.activity_main_drawer)
                 .setOpenableLayout(drawer)
                 .build();
         navigationView.setNavigationItemSelectedListener(item -> {

@@ -1,14 +1,11 @@
 package com.example.drawer.ui.home;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.domain.CommentItem;
@@ -19,7 +16,6 @@ import com.github.zhtouchs.ZHActivityManager;
 import com.github.zhtouchs.ZHAsyncTask;
 import com.google.gson.Gson;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
@@ -90,30 +86,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 });
                 break;
             case R.id.button_upload_file:
-//                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                int permission = ActivityCompat.checkSelfPermission(this.getActivity(),
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                if (permission != PackageManager.PERMISSION_GRANTED) {
-                    // We don't have permission so prompt the user
-                    ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            1);
-                }
-                File file = new File("/sdcard/Pictures/Screenshots/Screenshot_20201122_002437_com.example.myapplication2.jpg");
-                MediaType fileMediaType = MediaType.parse("image/jpg");
-                RequestBody requestBodyFile = RequestBody.create(file, fileMediaType);
-                RequestBody requestBody1 = new MultipartBody.Builder()
-                        .addFormDataPart("file", file.getName(), requestBodyFile)
-                        .build();
-                OkHttpTest.okPost(OkHttpTest.URL + "/file/upload", requestBody1, new OkHttpTest.OkHttpCallBack() {
-                    @Override
-                    public void onResponse(@NotNull Response response) {
-                        try {
-                            ZHLog.d(TAG, "comment" + response.body().string());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
                 break;
 
             case R.id.button_download_file:

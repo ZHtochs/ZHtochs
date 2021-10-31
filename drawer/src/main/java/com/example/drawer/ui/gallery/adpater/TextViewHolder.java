@@ -1,10 +1,9 @@
 package com.example.drawer.ui.gallery.adpater;
 
 import android.view.View;
-
 import androidx.annotation.NonNull;
-
 import com.example.drawer.databinding.ItemTextOnlyBinding;
+import com.example.drawer.ui.gallery.beans.ItemBean;
 
 /**
  * 功能描述
@@ -20,5 +19,12 @@ public class TextViewHolder extends BaseViewHolder {
     public TextViewHolder(ItemTextOnlyBinding itemTextOnlyBinding) {
         super(itemTextOnlyBinding.getRoot());
         viewDataBinding = itemTextOnlyBinding;
+    }
+
+
+    @Override
+    protected void onBind(ItemBean itemBean,int position) {
+        super.onBind(itemBean, position);
+        ((ItemTextOnlyBinding) viewDataBinding).setTextViewEntry(itemBean);
     }
 }

@@ -1,9 +1,11 @@
 package com.github.zhtouchs.Utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Point;
 import android.view.Gravity;
 
+import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.customview.widget.ViewDragHelper;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -21,7 +23,7 @@ public class DrawerLayoutUtil {
         setDrawerLeftEdgeSize(activity, drawerLayout, displayWidthPercentage, Gravity.RIGHT);
     }
 
-    public static void setDrawerLeftEdgeSize(@NonNull Activity activity, @NonNull DrawerLayout drawerLayout, double displayWidthPercentage, int gravityDic) {
+    public static void setDrawerLeftEdgeSize(@NonNull Context context , @NonNull DrawerLayout drawerLayout, double displayWidthPercentage, int gravityDic) {
         try {
             String draggerFieldName;
             String leftCallbackFieldName;
@@ -42,7 +44,8 @@ public class DrawerLayoutUtil {
             edgeSizeField.setAccessible(true);
             int edgeSize = edgeSizeField.getInt(leftDragger);
             Point displaySize = new Point();
-            activity.getWindowManager().getDefaultDisplay().getSize(displaySize);
+            WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            windowManager.getDefaultDisplay().getSize(displaySize);
             edgeSizeField.setInt(leftDragger, Math.max(edgeSize, (int) (displaySize.x * displayWidthPercentage)));
             Field leftCallbackField = drawerLayout.getClass().getDeclaredField(leftCallbackFieldName);
             leftCallbackField.setAccessible(true);

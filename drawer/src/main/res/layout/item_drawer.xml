@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+    <data>
+
+    </data>
+    <androidx.drawerlayout.widget.DrawerLayout
+            android:layout_width="match_parent"
+            android:id="@+id/drawer_layout"
+            android:layout_height="150dp"
+            tools:openDrawer="start">
+        <!--内容区-->
+        <LinearLayout
+                android:id="@+id/view_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+            <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/baseline_3d_rotation_black_24dp"/>
+
+            <Button
+                    android:id="@+id/btn_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="打开侧滑栏"/>
+
+        </LinearLayout>
+
+        <!--左侧滑区-->
+        <LinearLayout
+                android:id="@+id/view_left"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="#3F51B5"
+                android:gravity="center"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical">
+
+            <ImageView
+                    android:id="@+id/delete_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="关闭所有侧滑栏"
+            android:background="@drawable/baseline_delete_black_24dp"/>
+        </LinearLayout>
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+</layout>

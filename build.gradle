@@ -3,6 +3,9 @@ buildscript {
     repositories {
         google()
         jcenter()
+
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven{ url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
         maven {
             url 'https://developer.huawei.com/repo/'
         }
@@ -22,6 +25,8 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven{ url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
         maven { url 'https://jitpack.io' }
         maven {
             url 'https://developer.huawei.com/repo/'
