@@ -16,12 +16,12 @@ public class MyPagedAdapter extends PagingDataAdapter<Student, MyPagedAdapter.My
         super(new DiffUtil.ItemCallback<Student>() {
             @Override
             public boolean areItemsTheSame(@NonNull Student oldItem, @NonNull Student newItem) {
-                return oldItem.getId() == newItem.getId();
+                return true;
             }
 
             @Override
             public boolean areContentsTheSame(@NonNull Student oldItem, @NonNull Student newItem) {
-                return oldItem.getStudentNumber() == newItem.getStudentNumber();
+                return true;
             }
         });
     }
@@ -39,10 +39,7 @@ public class MyPagedAdapter extends PagingDataAdapter<Student, MyPagedAdapter.My
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         ZHLog.d(TAG, "onBindViewHolder");
         Student student = getItem(position);
-        if (student == null) {
-            holder.itemPagingBinding.studentId.setText("loading");
-            holder.itemPagingBinding.studentNumber.setText("loading");
-        } else {
+        if (student != null) {
             holder.itemPagingBinding.studentId.setText("" + student.getId());
             holder.itemPagingBinding.studentNumber.setText("" + student.getStudentNumber());
         }

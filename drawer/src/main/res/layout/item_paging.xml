@@ -4,15 +4,15 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="100dp">
+              android:layout_height="wrap_content">
     <TextView
             tools:text="数据库里的ID"
             android:layout_width="wrap_content"
-            android:layout_height="100dp" android:id="@+id/student_number"
+            android:layout_height="wrap_content" android:id="@+id/student_number"
     />
     <TextView
             tools:text="学生Id"
             android:layout_marginStart="50dp"
             android:layout_width="wrap_content"
-            android:layout_height="100dp" android:id="@+id/student_id"/>
+            android:layout_height="wrap_content" android:id="@+id/student_id"/>
 </LinearLayout>

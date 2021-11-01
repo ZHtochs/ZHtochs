@@ -9,12 +9,14 @@ import com.example.drawer.R;
 import com.example.drawer.databinding.ItemDrawerBinding;
 import com.example.drawer.databinding.ItemTextOnlyBinding;
 import com.example.drawer.databinding.ItemWithImageBinding;
+import com.example.drawer.ui.gallery.GalleryFragment;
 import com.example.drawer.ui.gallery.beans.DrawerBean;
 import com.example.drawer.ui.gallery.beans.ImageBean;
 import com.example.drawer.ui.gallery.beans.ItemBean;
 import com.github.zhtouchs.Utils.ZHLog;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static com.example.drawer.ui.gallery.adpater.BaseViewHolder.*;
 
@@ -24,13 +26,21 @@ import static com.example.drawer.ui.gallery.adpater.BaseViewHolder.*;
  * @author zhuhe
  * @since 2021-09-03
  */
-public class MyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
+public class MyAdapter extends RecyclerView.Adapter<BaseViewHolder> implements GalleryFragment.ItemTouchStatus {
 
     private static final String TAG = "MyAdapter";
-    ArrayList<? extends ItemBean> arrayList = new ArrayList<>();
+    ArrayList<ItemBean> arrayList = new ArrayList<>();
 
     public MyAdapter(ArrayList<ItemBean> itemBeans) {
         this.arrayList = itemBeans;
+    }
+
+    public void setArrayList(ArrayList<ItemBean> arrayList) {
+        this.arrayList = arrayList;
+    }
+
+    public ArrayList<ItemBean> getArrayList() {
+        return arrayList;
     }
 
     @NonNull
@@ -87,6 +97,20 @@ public class MyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             return IMAGE_TYPE;
         }
         return TEXT_TYPE;
+    }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        Collections.swap(arrayList, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+
+    @Override
+    public boolean onItemRemove(int position) {
+        arrayList.remove(position);
+        notifyItemRemoved(position);
+        return false;
     }
 
     private class DeleteListerImpl implements DeleteLister {

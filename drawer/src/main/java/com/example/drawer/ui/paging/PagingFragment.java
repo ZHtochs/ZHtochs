@@ -14,6 +14,8 @@ import com.example.drawer.databinding.FragmentPagingBinding;
 import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.Utils.ZHThreadPool;
 
+import java.util.Random;
+
 public class PagingFragment extends Fragment {
     private static final String TAG = "PagingFragment";
 
@@ -49,20 +51,16 @@ public class PagingFragment extends Fragment {
             public void onChanged(PagingData<Student> studentPagingData) {
                 ZHLog.d(TAG, "onChanged");
                 pagedAdapter.submitData(getViewLifecycleOwner().getLifecycle(), studentPagingData);
-                ZHLog.d(TAG, "onChanged" + pagedAdapter.getItemCount());
-                binding.recycleView.smoothScrollToPosition(pagedAdapter.getItemCount());
-
             }
         });
         binding.insert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ZHThreadPool.INSTANCE.execute("insert", () -> {
-                    for (int i = 1; i < 2; i++) {
-                        Student student = new Student();
-                        student.setStudentNumber(i);
-                        studentDao.insertStudents(student);
-                    }
+                    Student student = new Student();
+                    Random random = new Random();
+                    student.setStudentNumber(random.nextInt());
+                    studentDao.insertStudents(student);
                 });
             }
         });
