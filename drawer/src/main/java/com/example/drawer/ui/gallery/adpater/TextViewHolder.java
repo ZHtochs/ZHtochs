@@ -21,10 +21,10 @@ public class TextViewHolder extends BaseViewHolder {
         viewDataBinding = itemTextOnlyBinding;
     }
 
-
     @Override
-    protected void onBind(ItemBean itemBean,int position) {
+    protected void onBind(ItemBean itemBean, int position) {
         super.onBind(itemBean, position);
         ((ItemTextOnlyBinding) viewDataBinding).setTextViewEntry(itemBean);
+        ((ItemTextOnlyBinding) viewDataBinding).id .setText(String.valueOf(position));
     }
 }

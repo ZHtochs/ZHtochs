@@ -39,6 +39,7 @@ public class GalleryFragment extends Fragment {
         RecyclerView recyclerView = fragmentGalleryBinding.recycle;
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
 
         ArrayList<ItemBean> itemBeans = new ArrayList<>();
@@ -69,29 +70,39 @@ public class GalleryFragment extends Fragment {
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new CustomItemTouchCallback(myAdapter));
         itemTouchHelper.attachToRecyclerView(recyclerView);
-
-        ZHThreadPool.INSTANCE.execute(TAG, new Runnable() {
+        fragmentGalleryBinding.insert.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                for (int i = 0; i < 10; i++) {
-                    ZHLog.d(TAG, "run");
-                    SystemClock.sleep(1000);
+            public void onClick(View v) {
+                ZHThreadPool.INSTANCE.execute(TAG, new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int i = 0; i < 10; i++) {
+                            ZHLog.d(TAG, "run");
+                            SystemClock.sleep(100);
 
-                    List<ItemBean> list = myAdapter.getArrayList();
+                            List<ItemBean> list = myAdapter.getArrayList();
 
-                    ArrayList<ItemBean> arrayList = new ArrayList<>(list);
-                    arrayList.add(new ItemBean("6", "" + random.nextFloat()));
+                            ArrayList<ItemBean> arrayList = new ArrayList<>(list);
+                            arrayList.add(new ItemBean("6", "" + random.nextFloat()));
 
+                            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new MyDiffUtilCallBack(list, arrayList));
 
-                    DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new MyDiffUtilCallBack(list, arrayList));
+                            list.clear();
+                            myAdapter.setArrayList(arrayList);
+                            //使用DiffResult分发给apdate热更新
 
-                    list.clear();
-                    myAdapter.setArrayList(arrayList);
-                    //使用DiffResult分发给apdate热更新
-
-
-                    getActivity().runOnUiThread(() -> diffResult.dispatchUpdatesTo(myAdapter));
-                }
+                            getActivity().runOnUiThread(() -> diffResult.dispatchUpdatesTo(myAdapter));
+                        }
+                    }
+                });
+            }
+        });
+        fragmentGalleryBinding.scroll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int i = Integer.parseInt(fragmentGalleryBinding.editText.getText().toString());
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) fragmentGalleryBinding.recycle.getLayoutManager();
+                linearLayoutManager.scrollToPositionWithOffset(myAdapter.getItemCount() - 1, Integer.MIN_VALUE);
             }
         });
         return fragmentGalleryBinding.getRoot();

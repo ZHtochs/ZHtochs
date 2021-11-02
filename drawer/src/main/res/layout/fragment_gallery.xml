@@ -7,20 +7,48 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/selected"
-        android:clickable="true"
-        tools:context=".ui.gallery.GalleryFragment">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycle"
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintBottom_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:clickable="true"
+            android:orientation="vertical"
+            tools:context=".ui.gallery.GalleryFragment"
+    >
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1">
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toTopOf="@+id/guideline5" app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+            </androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal">
+            <Button
+                    android:text="Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/scroll"
+                    android:layout_weight="1"
+                    />
+            <Button
+                    android:text="Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/insert"
+                    android:layout_weight="1"
+/>
+
+            <EditText android:layout_width="55dp" android:layout_height="33dp"
+                      android:id="@+id/editText"
+                      android:text="1"
+                      android:layout_weight="1"
+            >
+
+            </EditText>
+        </LinearLayout>
+
+    </LinearLayout>
 </layout>
