@@ -7,12 +7,9 @@
               android:layout_height="match_parent"
               android:fitsSystemWindows="true"
               android:orientation="vertical">
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <fragment
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:id="@+id/nav_home"
-            android:name="com.example.drawer.ui.gallery.GalleryFragment"
-            android:label="gallery"
-            tools:layout="@layout/fragment_gallery" />
+    </androidx.recyclerview.widget.RecyclerView>
 </LinearLayout>

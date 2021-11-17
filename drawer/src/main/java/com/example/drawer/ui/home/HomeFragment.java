@@ -5,12 +5,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 import com.example.domain.CommentItem;
 import com.example.drawer.R;
+import com.example.drawer.TestActivity;
 import com.example.okhttp.OkHttpTest;
 import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.ZHActivityManager;
@@ -29,8 +30,6 @@ import java.io.InputStream;
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "HomeFragment";
 
-    ImageView imageView;
-
     private final String urlString = "https://pic1.zhimg.com/80/v2-15b2a9a8a8ac38d7ddd47fe9b792232b_720w.jpg?source=1940ef5c";
     private HomeViewModel homeViewModel;
 
@@ -39,11 +38,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-        imageView = root.findViewById(R.id.imageView_home);
         root.findViewById(R.id.button_get).setOnClickListener(this);
         root.findViewById(R.id.button_post).setOnClickListener(this);
         root.findViewById(R.id.button_upload_file).setOnClickListener(this);
         root.findViewById(R.id.button_download_file).setOnClickListener(this);
+        SlidingPaneLayout slidingPaneLayout = root.findViewById(R.id.slide);
+        slidingPaneLayout.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        slidingPaneLayout.setParallaxDistance(getResources().getDimensionPixelOffset(R.dimen.dp_40));
         return root;
     }
 
@@ -87,6 +88,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 });
                 break;
             case R.id.button_upload_file:
+                startActivity(new Intent(getContext(), TestActivity.class));
                 break;
 
             case R.id.button_download_file:
