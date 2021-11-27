@@ -6,10 +6,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 import com.example.drawer.R;
 import com.github.zhtouchs.Utils.ZHLog;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * @program: MyDemo
@@ -19,7 +20,13 @@ import org.jetbrains.annotations.NotNull;
 public class SlideLayoutAdapter extends RecyclerView.Adapter<SlideLayoutAdapter.SlideLayoutViewHolder> {
     private static final String TAG = "SlideLayoutAdapter";
 
-    private SlideLayout slideLayout;
+    private SlideLayout openedSlideLayout;
+
+    private List<Object> list;
+
+    public SlideLayoutAdapter(List<Object> list) {
+        this.list = list;
+    }
 
     @Override
     public long getItemId(int position) {
@@ -40,7 +47,12 @@ public class SlideLayoutAdapter extends RecyclerView.Adapter<SlideLayoutAdapter.
 
     @Override
     public int getItemCount() {
-        return 10;
+        return list.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
     public class SlideLayoutViewHolder extends RecyclerView.ViewHolder {
@@ -80,7 +92,17 @@ public class SlideLayoutAdapter extends RecyclerView.Adapter<SlideLayoutAdapter.
                     }
                 }
             });
-            slidingPaneLayout.setPanelSlideListener(new SlidingPaneLayout.PanelSlideListener() {
+            slidingPaneLayout.setListener(new SlideLayout.SlideListener() {
+                @Override
+                public void isGoingToSlide(SlideLayout slideLayout) {
+                    ZHLog.d(TAG, "isGoingToSlide");
+                    if (openedSlideLayout != null && openedSlideLayout != slideLayout
+                            && openedSlideLayout.isOpen()) {
+                        ZHLog.d(TAG, "isGoingToClose");
+                        openedSlideLayout.closePane();
+                    }
+                }
+
                 @Override
                 public void onPanelSlide(@NonNull @NotNull View panel, float slideOffset) {
                 }
@@ -88,20 +110,26 @@ public class SlideLayoutAdapter extends RecyclerView.Adapter<SlideLayoutAdapter.
                 @Override
                 public void onPanelOpened(@NonNull @NotNull View panel) {
                     ZHLog.d(TAG, "onPanelOpened");
-                    if (SlideLayoutAdapter.this.slideLayout != null) {
-                        SlideLayoutAdapter.this.slideLayout.closePane();
-                    }
-                    SlideLayoutAdapter.this.slideLayout = slidingPaneLayout;
+                    openedSlideLayout = slidingPaneLayout;
                 }
 
                 @Override
                 public void onPanelClosed(@NonNull @NotNull View panel) {
                     ZHLog.d(TAG, "onPanelClosed");
-                    if (SlideLayoutAdapter.this.slideLayout == slidingPaneLayout) {
-                        SlideLayoutAdapter.this.slideLayout = null;
-                    }
                 }
             });
+        }
+    }
+
+    public final void appendList(List<Object> data) {
+        int positionStart = list.size();
+        list.addAll(data);
+        int itemCount = list.size() - positionStart;
+
+        if (positionStart == 0) {
+            notifyDataSetChanged();
+        } else {
+            notifyItemRangeInserted(positionStart + 1, itemCount);
         }
     }
 }

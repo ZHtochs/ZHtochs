@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.customview.widget.ViewDragHelper;
 import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 import com.github.zhtouchs.Utils.ZHLog;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,12 @@ public class SlideLayout extends SlidingPaneLayout {
     private int startX;
     private int startY;
 
+    private ViewDragHelper viewDragHelper;
+
+    boolean isTouchDown;
+
+    private SlideListener slideListener;
+
     public SlideLayout(@NonNull @NotNull Context context) {
         super(context);
     }
@@ -44,6 +51,7 @@ public class SlideLayout extends SlidingPaneLayout {
             case MotionEvent.ACTION_DOWN:
                 startX = (int) event.getX();
                 startY = (int) event.getY();
+                isTouchDown = false;
                 break;
             case MotionEvent.ACTION_MOVE:
                 final float x = event.getX();
@@ -59,6 +67,10 @@ public class SlideLayout extends SlidingPaneLayout {
                 if (xMoved) {
                     //横轴方向大于纵轴方向的四倍的话拦截事件自己(抽屉效果)处理,否则不拦截交给子布局listview滑动处理
                     getParent().requestDisallowInterceptTouchEvent(true);
+                    if (!isTouchDown) {
+                        slideListener.isGoingToSlide(this);
+                        isTouchDown = true;
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -70,21 +82,40 @@ public class SlideLayout extends SlidingPaneLayout {
     }
 
     @Override
-    public void setPanelSlideListener(@Nullable @org.jetbrains.annotations.Nullable PanelSlideListener listener) {
+    public void setPanelSlideListener(@Nullable PanelSlideListener listener) {
         super.setPanelSlideListener(listener);
     }
 
-    public interface SlideLayoutListener {
-        void onClick();
+    public void setListener(SlideListener slideListener) {
+        setPanelSlideListener(slideListener);
+        this.slideListener = slideListener;
+    }
 
-        void onLongClick();
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        sideView = getChildAt(0);
+        contentView = getChildAt(1);
+        viewDragHelper = ViewDragHelper.create(this, new ViewDragHelper.Callback() {
+            @Override
+            public boolean tryCaptureView(@NonNull @NotNull View child, int pointerId) {
+                return true;
+            }
+        });
+        viewDragHelper.captureChildView(contentView, 0);
+    }
 
-        void onDeleteClick();
+    public interface SlideListener extends PanelSlideListener {
 
+        void isGoingToSlide(SlideLayout slideLayout);
+
+        @Override
         void onPanelSlide(@NonNull @NotNull View panel, float slideOffset);
 
-        void onPanelOpened(@NonNull @NotNull SlideLayout slideLayout);
+        @Override
+        void onPanelOpened(@NonNull @NotNull View panel);
 
-        void onPanelClosed(@NonNull @NotNull SlideLayout slideLayout);
+        @Override
+        void onPanelClosed(@NonNull @NotNull View panel);
     }
 }
