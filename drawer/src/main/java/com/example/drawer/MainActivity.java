@@ -8,6 +8,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import com.github.zhtouchs.Utils.DrawerLayoutUtil;
 import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.activity.BaseActivity;
 import com.google.android.material.navigation.NavigationView;
@@ -19,6 +20,7 @@ public class MainActivity extends BaseActivity {
     private AppBarConfiguration mAppBarConfiguration;
 
     private DrawerLayout drawer;
+
     private Toolbar toolbar;
 
     @Override
@@ -40,7 +42,7 @@ public class MainActivity extends BaseActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-//        DrawerLayoutUtil.setDrawerEdgeSize(this, drawer, 0.3);
+        DrawerLayoutUtil.setDrawerEdgeSize(this, drawer, 0.3);
     }
 
 
