@@ -12,7 +12,7 @@ public abstract class StudentsDatabase extends RoomDatabase {
 
     public static synchronized StudentsDatabase getInstance(Context context) {
         if (instance == null) {
-            instance = Room.databaseBuilder(context, StudentsDatabase.class, "students_database")
+            instance = Room.databaseBuilder(context, StudentsDatabase.class, "students_database.db")
                     .build();
         }
         return instance;

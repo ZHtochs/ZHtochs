@@ -20,4 +20,5 @@ public class TestActivity extends BaseActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, new TestFragment()).commit();
     }
+
 }
