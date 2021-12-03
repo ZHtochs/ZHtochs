@@ -1,6 +1,7 @@
 package com.example.drawer.ui.home;
 
-import android.content.Intent;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,16 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.slidingpanelayout.widget.SlidingPaneLayout;
-import com.example.domain.CommentItem;
+import com.example.domain.FeedDatabase;
+import com.example.domain.FeedEntry;
+import com.example.domain.FeedReaderContract;
+import com.example.domain.FeedReaderDbHelper;
 import com.example.drawer.R;
-import com.example.drawer.TestActivity;
 import com.example.okhttp.OkHttpTest;
 import com.github.zhtouchs.Utils.ZHLog;
+import com.github.zhtouchs.Utils.ZHThreadPool;
 import com.github.zhtouchs.ZHActivityManager;
-import com.github.zhtouchs.ZHAsyncTask;
-import com.google.gson.Gson;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,12 +26,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "HomeFragment";
 
     private final String urlString = "https://pic1.zhimg.com/80/v2-15b2a9a8a8ac38d7ddd47fe9b792232b_720w.jpg?source=1940ef5c";
     private HomeViewModel homeViewModel;
+
+    FeedReaderDbHelper dbHelper;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -45,6 +49,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         SlidingPaneLayout slidingPaneLayout = root.findViewById(R.id.slide);
         slidingPaneLayout.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         slidingPaneLayout.setParallaxDistance(getResources().getDimensionPixelOffset(R.dimen.dp_40));
+        dbHelper = new FeedReaderDbHelper(getActivity());
+
         return root;
     }
 
@@ -52,43 +58,46 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_get:
-                ZHAsyncTask.create(new ZHAsyncTask.Subscriber<String>() {
+                ZHThreadPool.INSTANCE.execute(TAG, new Runnable() {
                     @Override
-                    public void subscribe(ZHAsyncTask<? super String> tAsycTask) throws Throwable {
-                        ZHLog.d(TAG, "subscribe");
-                        tAsycTask.onNext("123");
-                    }
-                }).addObserver(new ZHAsyncTask.Observer<String>() {
-                    @Override
-                    public void onError(Throwable throwable) {
+                    public void run() {
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-                    }
+                        for (int i = 0; i < 10; i++) {
+                            ContentValues values = new ContentValues();
+                            values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_TITLE, "title" + i);
+                            values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_SUBTITLE, "subtitle" + i);
 
-                    @Override
-                    public void onNext(String s) {
-                        ZHLog.d(TAG, "onNext" + s);
-                    }
-                });
-                break;
-            case R.id.button_post:
-                CommentItem commentItem = new CommentItem("12313213", "辣是真的牛皮");
-                Gson gson = new Gson();
-                String jsonStr = gson.toJson(commentItem);
-                MediaType mediaType = MediaType.parse("application/json");
-                RequestBody requestBody = RequestBody.create(jsonStr, mediaType);
-                OkHttpTest.okPost(OkHttpTest.URL + "/post/comment", requestBody, response -> {
-                    ZHLog.d(TAG, response.code());
-                    if (response.code() == 200) {
-                        try {
-                            ZHLog.d(TAG, "comment" + response.body().string());
-                        } catch (IOException e) {
-                            e.printStackTrace();
+// Insert the new row, returning the primary key value of the new row
+                            long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
                         }
                     }
                 });
                 break;
+            case R.id.button_post:
+                ZHThreadPool.INSTANCE.execute(TAG, new Runnable() {
+                    @Override
+                    public void run() {
+                        FeedDatabase feedDatabase = FeedDatabase.getInstance(getContext());
+                        List<FeedEntry> allFeeds = feedDatabase.getFeedDao().getAllFeeds();
+                        ZHLog.d(TAG, allFeeds.size());
+                    }
+                });
+
+                break;
             case R.id.button_upload_file:
-                startActivity(new Intent(getContext(), TestActivity.class));
+                ZHThreadPool.INSTANCE.execute(TAG, new Runnable() {
+                    @Override
+                    public void run() {
+                        FeedDatabase feedDatabase = FeedDatabase.getInstance(getContext());
+                        List<FeedEntry> list = new ArrayList<>();
+                        FeedEntry feedEntry = new FeedEntry();
+                        feedEntry.setSubTitle("324234");
+                        feedEntry.setTitle("dfsfgsdfgdfgfd");
+                        list.add(feedEntry);
+                        feedDatabase.getFeedDao().insertFeed(feedEntry);
+                    }
+                });
                 break;
 
             case R.id.button_download_file:
