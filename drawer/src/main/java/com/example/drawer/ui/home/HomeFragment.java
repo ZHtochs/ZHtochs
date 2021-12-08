@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 import com.example.domain.FeedDatabase;
@@ -39,8 +41,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        ZHLog.d(TAG,"onCreateView");
         homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
+        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                ZHLog.d(TAG, "onChanged" + s);
+            }
+        });
+        homeViewModel.setmText("Sadasdada");
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         root.findViewById(R.id.button_get).setOnClickListener(this);
         root.findViewById(R.id.button_post).setOnClickListener(this);
@@ -52,6 +62,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         dbHelper = new FeedReaderDbHelper(getActivity());
 
         return root;
+    }
+
+    @Override
+    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ZHLog.d(TAG,"onCreate");
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ZHLog.d(TAG,"onSaveInstanceState");
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        ZHLog.d(TAG,"onViewStateRestored");
     }
 
     @Override

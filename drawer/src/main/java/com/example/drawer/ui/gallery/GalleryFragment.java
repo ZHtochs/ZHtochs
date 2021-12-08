@@ -51,9 +51,9 @@ public class GalleryFragment extends Fragment {
         recyclerView.setAdapter(myAdapter);
         GalleryViewModel galleryViewModel =
                 new ViewModelProvider(this.requireActivity()).get(GalleryViewModel.class);
-        itemBeans.add(new ItemBean("6", "" + random.nextFloat()));
-        itemBeans.add(new ItemBean("6", "" + random.nextFloat()));
-        itemBeans.add(new ItemBean("6", "" + random.nextFloat()));
+        for (int i = 0; i < 100; i++) {
+            itemBeans.add(new ItemBean("6", "" + random.nextFloat()));
+        }
         galleryViewModel.getLiveData().observe(getViewLifecycleOwner(), new Observer<ArrayList<ItemBean>>() {
             @Override
             public void onChanged(ArrayList<ItemBean> itemBeans) {
@@ -68,8 +68,8 @@ public class GalleryFragment extends Fragment {
             }
         });
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new CustomItemTouchCallback(myAdapter));
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new CustomItemTouchCallback(myAdapter));
+//        itemTouchHelper.attachToRecyclerView(recyclerView);
         fragmentGalleryBinding.insert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
