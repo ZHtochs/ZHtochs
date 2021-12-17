@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
@@ -20,12 +19,13 @@ import com.example.drawer.ui.gallery.adpater.MyAdapter;
 import com.example.drawer.ui.gallery.beans.ItemBean;
 import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.Utils.ZHThreadPool;
+import com.github.zhtouchs.activity.BaseFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class GalleryFragment extends Fragment {
+public class GalleryFragment extends BaseFragment {
 
     public static final String URL = "https://avatar.csdnimg.cn/2/A/5/1_u014803950.jpg";
 

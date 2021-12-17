@@ -10,12 +10,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 import com.example.drawer.databinding.DragViewLayoutBinding;
 import com.github.zhtouchs.Utils.ZHLog;
+import com.github.zhtouchs.activity.BaseFragment;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  * @author: zhuhe
  * @create: 2021-12-02 23:30
  **/
-public class TestFragment extends Fragment implements View.OnClickListener {
+public class TestFragment extends BaseFragment implements View.OnClickListener {
     private static final String TAG = "TestFragment";
 
     private Pair pair;

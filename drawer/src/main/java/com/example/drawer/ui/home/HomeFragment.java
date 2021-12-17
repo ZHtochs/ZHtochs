@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.slidingpanelayout.widget.SlidingPaneLayout;
@@ -21,6 +20,7 @@ import com.example.okhttp.OkHttpTest;
 import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.Utils.ZHThreadPool;
 import com.github.zhtouchs.ZHActivityManager;
+import com.github.zhtouchs.activity.BaseFragment;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +31,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment implements View.OnClickListener {
+public class HomeFragment extends BaseFragment implements View.OnClickListener {
     private static final String TAG = "HomeFragment";
 
     private final String urlString = "https://pic1.zhimg.com/80/v2-15b2a9a8a8ac38d7ddd47fe9b792232b_720w.jpg?source=1940ef5c";
