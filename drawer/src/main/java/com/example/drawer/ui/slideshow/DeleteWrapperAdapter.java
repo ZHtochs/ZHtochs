@@ -1,7 +1,5 @@
 package com.example.drawer.ui.slideshow;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.IntDef;
@@ -71,14 +69,6 @@ public class DeleteWrapperAdapter extends RecyclerView.Adapter<DeleteViewHolder>
         if (position != students.size()) {
             notifyItemRangeChanged(position, students.size() - position);
         }
-
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(() -> {
-            if (slideLayout != null) {
-                slideLayout.closePane();
-            }
-        }, 200);
-
         ZHThreadPool.INSTANCE.execute(TAG, () -> StudentsDatabase.getInstance().getStudentDao().deleteWithId(student.getId()));
     }
 
@@ -88,6 +78,7 @@ public class DeleteWrapperAdapter extends RecyclerView.Adapter<DeleteViewHolder>
     }
 
     public void setState(@Duration int state, boolean isNeedNotifyChange) {
+        ZHLog.d(TAG, "setState " + state);
         this.state = state;
         if (isNeedNotifyChange) {
             notifyDataSetChanged();

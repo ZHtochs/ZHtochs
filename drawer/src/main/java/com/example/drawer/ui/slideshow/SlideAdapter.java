@@ -57,6 +57,7 @@ public class SlideAdapter extends RecyclerView.Adapter<SlideAdapter.SlideViewHol
         public void bindViewEntry(int position, @DeleteWrapperAdapter.Duration int adapterState, DeleteListener listener) {
             ZHLog.d(TAG, "bind " + position);
             Student student = getStudents().get(position);
+            itemSlideBinding.slide.closePane();
             itemSlideBinding.slide.setPanelSlideListener(listener);
             itemSlideBinding.slide.setCanSlide(listener.isCanSlide());
             itemSlideBinding.position.setText("adapter位置 " + position);
