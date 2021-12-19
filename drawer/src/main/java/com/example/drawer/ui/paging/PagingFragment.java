@@ -59,7 +59,7 @@ public class PagingFragment extends Fragment {
                 ZHThreadPool.INSTANCE.execute("insert", () -> {
                     Student student = new Student();
                     Random random = new Random();
-                    student.setStudentNumber(random.nextInt());
+                    student.setStudentName(""+random.nextInt());
                     studentDao.insertStudents(student);
                 });
             }

@@ -41,7 +41,7 @@ public class MyPagedAdapter extends PagingDataAdapter<Student, MyPagedAdapter.My
         Student student = getItem(position);
         if (student != null) {
             holder.itemPagingBinding.studentId.setText("" + student.getId());
-            holder.itemPagingBinding.studentNumber.setText("" + student.getStudentNumber());
+            holder.itemPagingBinding.studentNumber.setText("" + student.getStudentName());
         }
     }
 

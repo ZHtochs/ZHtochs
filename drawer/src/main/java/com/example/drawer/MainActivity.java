@@ -2,13 +2,13 @@ package com.example.drawer;
 
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import com.github.zhtouchs.Utils.DrawerLayoutUtil;
 import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.activity.BaseActivity;
 import com.google.android.material.navigation.NavigationView;
@@ -29,6 +29,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -39,12 +40,18 @@ public class MainActivity extends BaseActivity {
             ZHLog.d(TAG, item.getItemId());
             return true;
         });
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.open();
+            }
+        });
+        toolbar.setNavigationIcon(R.drawable.baseline_menu_black_24dp);
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-        DrawerLayoutUtil.setDrawerEdgeSize(this, drawer, 0.3);
+//        DrawerLayoutUtil.setDrawerEdgeSize(this, drawer, 0.3);
     }
-
 
     @Override
     protected void onResume() {
@@ -64,7 +71,6 @@ public class MainActivity extends BaseActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-
 
     @Override
     public void onBackPressed() {
