@@ -20,4 +20,8 @@ public interface StudentDao {
 
     @Query("SELECT * FROM student_table WHERE classId =:classId AND id>:start ORDER BY id LIMIT :offset")
     List<Student> getSameClassStudent(int classId, int start, int offset);
+
+    @Query("DELETE FROM student_table WHERE id ==:id")
+    void deleteWithId(int id);
+
 }

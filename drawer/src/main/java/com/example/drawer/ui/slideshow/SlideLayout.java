@@ -23,6 +23,8 @@ public class SlideLayout extends SlidingPaneLayout {
 
     private int startY;
 
+    private boolean isCanSlide;
+
     public SlideLayout(@NonNull @NotNull Context context) {
         super(context);
     }
@@ -64,6 +66,22 @@ public class SlideLayout extends SlidingPaneLayout {
                 break;
         }
         return super.dispatchTouchEvent(event);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (isCanSlide) {
+            return super.onInterceptTouchEvent(ev);
+        }
+        return false;
+    }
+
+    public boolean isCanSlide() {
+        return isCanSlide;
+    }
+
+    public void setCanSlide(boolean canSlide) {
+        isCanSlide = canSlide;
     }
 
     @Override

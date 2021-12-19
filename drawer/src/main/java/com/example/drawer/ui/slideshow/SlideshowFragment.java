@@ -20,6 +20,7 @@ import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.Utils.ZHThreadPool;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Random;
 
 public class SlideshowFragment extends Fragment {
@@ -28,17 +29,34 @@ public class SlideshowFragment extends Fragment {
 
     private StudentDao studentDao;
 
-    SlideAdapter slideAdapter;
+    DeleteWrapperAdapter slideAdapter;
 
     FragmentSlideshowBinding binding;
 
-    private OnBackPressedCallback callback = new OnBackPressedCallback(false) {
+    private OnBackPressedCallback callback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
-            if (slideAdapter.getState() == SlideAdapter.Duration.EDIT) {
-                slideAdapter.setState(SlideAdapter.Duration.COMMON);
+            if (slideAdapter.getState() == DeleteWrapperAdapter.Duration.EDIT) {
+                slideAdapter.setState(DeleteWrapperAdapter.Duration.COMMON, true);
             }
             callback.setEnabled(false);
+        }
+    };
+
+    private NotifyListener notifyListener = new NotifyListener() {
+        @Override
+        public void notifyEnterEdit() {
+            callback.setEnabled(true);
+        }
+
+        @Override
+        public void notifyCheckItemChange(int count) {
+            ZHLog.d(TAG, "notifyCheckItemChange " + count);
+        }
+
+        @Override
+        public void notifyEmptyData() {
+            ZHLog.d(TAG, "notifyEmptyData");
         }
     };
 
@@ -46,6 +64,7 @@ public class SlideshowFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         studentDao = StudentsDatabase.getInstance(getContext()).getStudentDao();
+        getActivity().getOnBackPressedDispatcher().addCallback(callback);
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_slideshow, container, false);
         binding.add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,7 +73,7 @@ public class SlideshowFragment extends Fragment {
                     @Override
                     public void run() {
                         Random random = new Random();
-                        for (int i = 0; i < 500; i++) {
+                        for (int i = 0; i < 20; i++) {
                             Student student = new Student();
                             student.setStudentName(Student.getRandomJianHan(3));
                             student.setClassId(random.nextInt(3));
@@ -70,7 +89,7 @@ public class SlideshowFragment extends Fragment {
                 slideAdapter.deleteChecked();
             }
         });
-        slideAdapter = new SlideAdapter();
+        slideAdapter = new DeleteWrapperAdapter(new SlideAdapter(), notifyListener);
         binding.slideRecycler.setAdapter(slideAdapter);
         binding.slideRecycler.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
@@ -95,17 +114,28 @@ public class SlideshowFragment extends Fragment {
                     return;
                 }
                 int position = mLinearLayoutManager.findLastCompletelyVisibleItemPosition();
-                ZHLog.d(TAG, "onScrolled position " + position);
                 int currentSum = slideAdapter.getItemCount();
-                ZHLog.d(TAG, "currentSum " + currentSum);
                 if (currentSum - position < 10) {
                     ZHLog.d(TAG, "addItem");
-                    Student student = slideAdapter.getStudents().get(currentSum - 1);
-                    recyclerView.post(() -> slideAdapter.appendList(studentDao.getSameClassStudent(0, student.getId(), 10)));
+                    ZHThreadPool.INSTANCE.execute(TAG, () -> {
+
+                        Student student = slideAdapter.getStudents().get(currentSum - 1);
+                        ZHLog.d(TAG, "student id " + student.getId());
+                        List<Student> students = studentDao.getSameClassStudent(0, student.getId(), 10);
+                        ZHLog.d(TAG, "student size " + students.size());
+                        recyclerView.post(() -> slideAdapter.appendList(students));
+                    });
+
                 }
             }
         });
-        slideAdapter.appendList(studentDao.getSameClassStudent(0, 0, 50));
+        ZHThreadPool.INSTANCE.execute(TAG, () -> {
+            List<Student> students = studentDao.getSameClassStudent(0, 0, 50);
+            binding.slideRecycler.post(() -> {
+                slideAdapter.appendList(students);
+                slideAdapter.notifyDataSetChanged();
+            });
+        });
         return binding.getRoot();
     }
 }
