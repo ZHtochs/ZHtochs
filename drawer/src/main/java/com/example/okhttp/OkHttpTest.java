@@ -1,35 +1,28 @@
 package com.example.okhttp;
 
 import com.github.zhtouchs.Utils.ZHLog;
-
+import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
 public class OkHttpTest {
-    public static final String URL = "http://192.168.1.108:9102";
+    public static final String URL = "https://www.httpbin.org/";
 
     private static final String TAG = "OkHttpTest";
 
     private OkHttpTest() {
     }
 
-    public static void okGet(String urlString, OkHttpCallBack callBack) {
+    public static void okGet() {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(1000, TimeUnit.MILLISECONDS)
                 .build();
 
         Request request = new Request.Builder()
                 .get()
-                .url(urlString)
+                .url(URL + "get?a=1&b=2")
                 .build();
         Call task = okHttpClient.newCall(request);
         task.enqueue(new Callback() {
@@ -41,18 +34,19 @@ public class OkHttpTest {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 ZHLog.d(TAG, "onResponse:" + response.code());
-                callBack.onResponse(response);
+                ZHLog.d(TAG, "onResponse:" + response.body().string());
             }
         });
     }
 
-    public static void okPost(String urlString,RequestBody requestBody, OkHttpCallBack callBack) {
+    public static void okPost() {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(1000, TimeUnit.MILLISECONDS)
                 .build();
+        FormBody formBody = new FormBody.Builder().add("a", "1").add("b", "2").build();
         Request request = new Request.Builder()
-                .post(requestBody)
-                .url(urlString)
+                .post(formBody)
+                .url(URL+"post")
                 .build();
         Call task = okHttpClient.newCall(request);
         task.enqueue(new Callback() {
@@ -64,13 +58,11 @@ public class OkHttpTest {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 ZHLog.d(TAG, "onResponse:" + response.code());
-                callBack.onResponse(response);
+                ZHLog.d(TAG, "onResponse:" + response.body().string());
             }
         });
     }
 
-    public interface OkHttpCallBack {
-        void onResponse(@NotNull Response response);
-    }
+
 
 }

@@ -1,8 +1,10 @@
 package com.example.drawer;
 
+import okhttp3.*;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.io.IOException;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -11,7 +13,19 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
     @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+    public void additionIsCorrect() throws IOException {
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
+            @NotNull
+            @Override
+            public Response intercept(@NotNull Chain chain) throws IOException {
+                System.out.println(System.currentTimeMillis());
+                Response proceed = chain.proceed(chain.request());
+                System.out.println(System.currentTimeMillis());
+                return proceed;
+            }
+        }).build();
+        Request request = new Request.Builder().url("http://wwww.baidu.com").build();
+        Call call = okHttpClient.newCall(request);
+        Response execute = call.execute();
     }
 }
