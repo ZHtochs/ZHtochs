@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.home.HomeFragment">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                tools:context=".ui.home.HomeFragment">
 
 
     <Button
-        android:id="@+id/button_get"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="okhttp_get" />
+            android:id="@+id/button_get"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="okhttp_get"/>
 
     <Button
-        android:id="@+id/button_post"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/button_get"
-        android:text="okhttp_get" />
+            android:id="@+id/button_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/button_get"
+            android:text="okhttp_get"/>
 
     <Button
-        android:id="@+id/button_upload_file"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/button_post"
-        android:text="okhttp_upload_file" />
+            android:id="@+id/button_upload_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/button_post"
+            android:text="okhttp_upload_file"/>
 
     <Button
-        android:id="@+id/button_download_file"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/button_upload_file"
-        android:text="okhttp_download_file" />
+            android:id="@+id/button_download_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/button_upload_file"
+            android:text="okhttp_download_file"/>
 
 
     <androidx.slidingpanelayout.widget.SlidingPaneLayout
@@ -69,24 +69,30 @@
         </LinearLayout>
     </androidx.slidingpanelayout.widget.SlidingPaneLayout>
 
+    <com.example.drawer.ui.view.ExpandableLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:layout_below="@+id/slide"
+                  android:orientation="vertical"
+                  android:id="@+id/test_LinearLayout"
+    />
+
     <com.getbase.floatingactionbutton.FloatingActionsMenu xmlns:fab="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        fab:fab_labelsPosition="left"
-        fab:fab_labelStyle="@style/fab_labels_style"
-        android:layout_alignParentBottom="true">
+                                                          android:layout_width="match_parent"
+                                                          android:layout_height="match_parent"
+                                                          android:layout_alignParentEnd="true"
+                                                          fab:fab_labelsPosition="left"
+                                                          fab:fab_labelStyle="@style/fab_labels_style"
+                                                          android:layout_alignParentBottom="true">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_size="mini"
-            fab:fab_title="two" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fab:fab_size="mini"
+                fab:fab_title="two"/>
 
         <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_size="mini"
-            fab:fab_title="two" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fab:fab_size="mini"
+                fab:fab_title="two"/>
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 </RelativeLayout>
