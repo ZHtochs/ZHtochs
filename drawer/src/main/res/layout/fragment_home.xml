@@ -69,11 +69,21 @@
         </LinearLayout>
     </androidx.slidingpanelayout.widget.SlidingPaneLayout>
 
-    <com.example.drawer.ui.view.ExpandableLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:layout_below="@+id/slide"
-                  android:orientation="vertical"
-                  android:id="@+id/test_LinearLayout"
+    <com.example.drawer.ui.view.ExpandableLayout android:layout_width="match_parent"
+                                                 android:layout_height="wrap_content"
+                                                 android:layout_below="@+id/slide"
+                                                 android:orientation="vertical"
+                                                 android:id="@+id/test_LinearLayout"
     />
+
+    <com.example.drawer.ui.view.ExpandableListView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_below="@+id/test_LinearLayout"
+            android:id="@+id/listview"/>
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:layout_marginTop="20dp"
+              android:layout_below="@id/listview"
+              android:text="123"/>
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu xmlns:fab="http://schemas.android.com/apk/res-auto"
                                                           android:layout_width="match_parent"

@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -32,13 +35,13 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     private final String urlString = "https://pic1.zhimg.com/80/v2-15b2a9a8a8ac38d7ddd47fe9b792232b_720w.jpg?source=1940ef5c";
     private HomeViewModel homeViewModel;
 
-    private ExecutorService service = Executors.newSingleThreadExecutor();
+    private final ExecutorService service = Executors.newSingleThreadExecutor();
 
     FragmentHomeBinding fragmentHomeBinding;
 
     FeedReaderDbHelper dbHelper;
 
-    private boolean isExpanded = false;
+    private final boolean isExpanded = false;
 
     Handler looper;
 
@@ -67,11 +70,44 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         for (int i = 0; i < 15; i++) {
             ItemBean bean = new ItemBean("6", "" + new Random().nextFloat());
             ItemTextOnlyBinding itemTextOnlyBinding
-                    = ItemTextOnlyBinding.inflate(getLayoutInflater(), fragmentHomeBinding.testLinearLayout, false);
+                    = ItemTextOnlyBinding.inflate(getLayoutInflater(), container, false);
             itemTextOnlyBinding.setTextViewEntry(bean);
             arrayList.add(itemTextOnlyBinding.getRoot());
         }
-        fragmentHomeBinding.testLinearLayout.setViewList(arrayList);
+
+        fragmentHomeBinding.listview.setAdapter(new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return arrayList.size();
+            }
+
+            @Override
+            public Object getItem(int position) {
+                return null;
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = arrayList.get(position);
+                LinearLayout linearLayout = view.findViewById(R.id.container);
+                ViewGroup.LayoutParams layoutParams = linearLayout.getLayoutParams();
+                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) layoutParams;
+                if (position == 0) {
+                    params.bottomMargin = getContext().getResources().getDimensionPixelOffset(R.dimen.dp_10);
+                } else {
+                    params.bottomMargin = getContext().getResources().getDimensionPixelOffset(R.dimen.dp_10);
+                    params.topMargin = getContext().getResources().getDimensionPixelOffset(R.dimen.dp_10);
+                }
+                linearLayout.setLayoutParams(params);
+                return arrayList.get(position);
+            }
+        });
+
         return root;
     }
 
@@ -94,12 +130,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_get:
-                fragmentHomeBinding.testLinearLayout.switchState();
+                fragmentHomeBinding.listview.switchState();
                 break;
             case R.id.button_post:
+                ZHLog.d(TAG, fragmentHomeBinding.listview.getMeasuredHeight());
                 break;
             case R.id.button_upload_file:
-                getActivity().finish();
+                View childAt = fragmentHomeBinding.listview.getChildAt(0);
+                ZHLog.d(TAG, childAt.getMeasuredHeight());
                 break;
 
             case R.id.button_download_file:

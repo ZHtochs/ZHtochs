@@ -1,7 +1,11 @@
 package com.example.drawer.ui.view;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -87,13 +91,27 @@ public class ExpandableLayout extends LinearLayout implements Animation.Animatio
         }
         ExpandAbleAnimation animation;
         ZHLog.d(TAG, "switchState " + collapsed);
+        ObjectAnimator animator;
         if (collapsed) {
-            animation = new ExpandAbleAnimation(MIN_COUNT * itemHeight, totalHeight);
+            animator = ObjectAnimator.ofInt(this, "height", MIN_COUNT * itemHeight, totalHeight);
         } else {
-            animation = new ExpandAbleAnimation(totalHeight, MIN_COUNT * itemHeight);
+            animator = ObjectAnimator.ofInt(this, "height", totalHeight, MIN_COUNT * itemHeight);
         }
-        animation.setAnimationListener(this);
-        startAnimation(animation);
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                collapsed = !collapsed;
+            }
+        });
+        animator.setDuration(1000);
+        animator.start();
+    }
+
+    public void setHeight(int height) {
+        Log.e(TAG, "", new Exception());
+        getLayoutParams().height = height;
+        requestLayout();
     }
 
     @Override
@@ -163,6 +181,7 @@ public class ExpandableLayout extends LinearLayout implements Animation.Animatio
             setDuration(300);
             setInterpolator(new FastOutLinearInInterpolator());
             ExpandableLayout.this.getLayoutParams().height = startHeight;
+
         }
 
         @Override
