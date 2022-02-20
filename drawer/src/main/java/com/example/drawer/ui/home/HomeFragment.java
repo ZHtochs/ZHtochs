@@ -7,9 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -25,6 +22,7 @@ import com.github.zhtouchs.activity.BaseFragment;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,6 +42,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     private final boolean isExpanded = false;
 
     Handler looper;
+    private List<String> list;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -66,49 +65,23 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         slidingPaneLayout.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         slidingPaneLayout.setParallaxDistance(getResources().getDimensionPixelOffset(R.dimen.dp_40));
         dbHelper = new FeedReaderDbHelper(getActivity());
-        ArrayList<View> arrayList = new ArrayList<>();
-        for (int i = 0; i < 15; i++) {
+        addView(15);
+        return root;
+    }
+
+    private void addView(int size) {
+        ArrayList<ItemBean> arrayList = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
             ItemBean bean = new ItemBean("6", "" + new Random().nextFloat());
-            ItemTextOnlyBinding itemTextOnlyBinding
-                    = ItemTextOnlyBinding.inflate(getLayoutInflater(), container, false);
-            itemTextOnlyBinding.setTextViewEntry(bean);
-            arrayList.add(itemTextOnlyBinding.getRoot());
+            arrayList.add(bean);
         }
 
-        fragmentHomeBinding.listview.setAdapter(new BaseAdapter() {
-            @Override
-            public int getCount() {
-                return arrayList.size();
-            }
-
-            @Override
-            public Object getItem(int position) {
-                return null;
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return position;
-            }
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = arrayList.get(position);
-                LinearLayout linearLayout = view.findViewById(R.id.container);
-                ViewGroup.LayoutParams layoutParams = linearLayout.getLayoutParams();
-                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) layoutParams;
-                if (position == 0) {
-                    params.bottomMargin = getContext().getResources().getDimensionPixelOffset(R.dimen.dp_10);
-                } else {
-                    params.bottomMargin = getContext().getResources().getDimensionPixelOffset(R.dimen.dp_10);
-                    params.topMargin = getContext().getResources().getDimensionPixelOffset(R.dimen.dp_10);
-                }
-                linearLayout.setLayoutParams(params);
-                return arrayList.get(position);
+        fragmentHomeBinding.testLinearLayout.setViewList(arrayList, R.layout.item_text_only,  (viewBinding, itemBean) -> {
+            if (viewBinding instanceof ItemTextOnlyBinding) {
+                ItemTextOnlyBinding textOnlyBinding = (ItemTextOnlyBinding) viewBinding;
+                textOnlyBinding.setTextViewEntry(itemBean);
             }
         });
-
-        return root;
     }
 
     @Override
@@ -130,14 +103,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_get:
-                fragmentHomeBinding.listview.switchState();
+                addView(2);
                 break;
             case R.id.button_post:
-                ZHLog.d(TAG, fragmentHomeBinding.listview.getMeasuredHeight());
+                addView(10);
                 break;
             case R.id.button_upload_file:
-                View childAt = fragmentHomeBinding.listview.getChildAt(0);
-                ZHLog.d(TAG, childAt.getMeasuredHeight());
+                fragmentHomeBinding.testLinearLayout.switchState();
+
                 break;
 
             case R.id.button_download_file:

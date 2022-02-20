@@ -1,21 +1,25 @@
 package com.example.drawer.ui.view;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.LinearLayout;
+import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
+import androidx.viewbinding.ViewBinding;
+import com.example.drawer.R;
 import com.github.zhtouchs.Utils.ZHLog;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * @program: MyDemo
@@ -42,6 +46,8 @@ public class ExpandableLayout extends LinearLayout implements Animation.Animatio
     private int totalHeight;
 
     private boolean needRelayout;
+
+    private List datas;
 
     public ExpandableLayout(Context context) {
         this(context, null);
@@ -73,39 +79,46 @@ public class ExpandableLayout extends LinearLayout implements Animation.Animatio
         super.setOrientation(orientation);
     }
 
-    public void setViewList(@Nullable List<View> viewList) {
-        if (viewList == null || viewList.isEmpty()) {
-            setVisibility(GONE);
+    public <T> void setViewList(List<T> list, @LayoutRes int layoutId, BiConsumer<ViewBinding, T> biConsumer) {
+        if (list == null || list.isEmpty() || list.equals(datas)) {
             return;
         }
+        this.datas = list;
         needRelayout = true;
-        totalSize = viewList.size();
-        for (View view : viewList) {
-            addView(view);
+        totalSize = list.size();
+        removeAllViews();
+        final int padding = getContext().getResources().getDimensionPixelOffset(R.dimen.dp_4);
+        for (int i = 0; i < list.size(); i++) {
+            ViewDataBinding inflate = DataBindingUtil.inflate(LayoutInflater.from(getContext()), layoutId, this, false);
+            biConsumer.accept(inflate, list.get(i));
+            if (i == 0) {
+                inflate.getRoot().setPadding(0, 0, 0, padding);
+            } else if (i == list.size() - 1) {
+                inflate.getRoot().setPadding(0, padding, 0, 0);
+            } else {
+                inflate.getRoot().setPadding(0, padding, 0, padding);
+            }
+            addView(inflate.getRoot());
         }
     }
 
     public void switchState() {
+        ZHLog.d(TAG, "switchState isAnimating " + isAnimating);
+
         if (!expandable || isAnimating) {
             return;
         }
         ExpandAbleAnimation animation;
         ZHLog.d(TAG, "switchState " + collapsed);
-        ObjectAnimator animator;
         if (collapsed) {
-            animator = ObjectAnimator.ofInt(this, "height", MIN_COUNT * itemHeight, totalHeight);
+            animation = new ExpandAbleAnimation(MIN_COUNT * itemHeight, totalHeight);
         } else {
-            animator = ObjectAnimator.ofInt(this, "height", totalHeight, MIN_COUNT * itemHeight);
+            animation = new ExpandAbleAnimation(totalHeight,MIN_COUNT * itemHeight );
         }
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                collapsed = !collapsed;
-            }
-        });
-        animator.setDuration(1000);
-        animator.start();
+        clearAnimation();
+        animation.setAnimationListener(this);
+        animation.setDuration(1000);
+        startAnimation(animation);
     }
 
     public void setHeight(int height) {
@@ -147,12 +160,15 @@ public class ExpandableLayout extends LinearLayout implements Animation.Animatio
 
     @Override
     public void onAnimationStart(Animation animation) {
+        ZHLog.d(TAG, "onAnimationStart isAnimating " + true);
         isAnimating = true;
     }
 
     @Override
     public void onAnimationEnd(Animation animation) {
         isAnimating = false;
+        ZHLog.d(TAG, "onAnimationEnd isAnimating " + false);
+
         collapsed = !collapsed;
         ZHLog.d(TAG, "collapsed " + collapsed);
         if (expandListener != null) {

@@ -6,45 +6,48 @@
                 name="textViewEntry"
                 type="com.example.drawer.ui.gallery.beans.ItemBean"/>
     </data>
-
-    <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/selected"
-            android:clickable="true"
-            android:focusable="true"
-            android:orientation="vertical">
-
-        <LinearLayout
-                android:id="@+id/container"
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:orientation="vertical">
+        <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    tools:text="1"/>
+                android:background="@drawable/selected"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical">
 
-            <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/title"
-                    android:layout_width="wrap_content"
+            <LinearLayout
+                    android:id="@+id/container"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="@{textViewEntry.title}"
-                    android:textSize="18sp"
-                    tools:text="nihao"/>
+                    android:orientation="horizontal">
+                <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        tools:text="1"/>
 
-            <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/publish_data"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_alignParentBottom="true"
-                    android:text="@{textViewEntry.publishData}"
-                    android:textSize="18sp"
-                    tools:text="20211102"/>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:text="@{textViewEntry.title}"
+                        android:textSize="18sp"
+                        tools:text="nihao"/>
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/publish_data"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_alignParentBottom="true"
+                        android:text="@{textViewEntry.publishData}"
+                        android:textSize="18sp"
+                        tools:text="20211102"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
 </layout>
