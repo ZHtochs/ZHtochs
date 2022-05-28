@@ -1,5 +1,7 @@
 package com.example.drawer.ui.home;
 
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -21,6 +23,7 @@ import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.activity.BaseFragment;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -76,7 +79,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
             arrayList.add(bean);
         }
 
-        fragmentHomeBinding.testLinearLayout.setViewList(arrayList, R.layout.item_text_only,  (viewBinding, itemBean) -> {
+        fragmentHomeBinding.testLinearLayout.setViewList(arrayList, R.layout.item_text_only, (viewBinding, itemBean) -> {
             if (viewBinding instanceof ItemTextOnlyBinding) {
                 ItemTextOnlyBinding textOnlyBinding = (ItemTextOnlyBinding) viewBinding;
                 textOnlyBinding.setTextViewEntry(itemBean);
@@ -99,14 +102,42 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         super.onViewStateRestored(savedInstanceState);
     }
 
+    public static String au = "com.example.myapplication.test";
+    public static String au2 = "com.example.myapplication.fileProvider";
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_get:
-                addView(2);
+                Bundle call = getActivity().getContentResolver().call(Uri.parse("content://" + au), "", "", null);
+                String string = call.getString(au);
+                Uri uri = Uri.parse(string);
+                MediaPlayer mediaPlayer = new MediaPlayer();
+                try {
+                    mediaPlayer.setDataSource(getActivity(), uri);
+                    mediaPlayer.prepare();
+                    mediaPlayer.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             case R.id.button_post:
-                addView(10);
+                Bundle call2 = getActivity().getContentResolver().call(Uri.parse("content://" + au), "", "", null);
+                String string2 = call2.getString(au);
+                ZHLog.d(TAG, "zhuhe " + string2);
+                try {
+                    InputStream is = getActivity().getContentResolver().openInputStream(Uri.parse(string2));
+                    File file = new File(getActivity().getFilesDir() + File.separator + "mp3.mp3");
+                    FileOutputStream fos = new FileOutputStream(file);
+                    byte[] b = new byte[1024];
+                    while ((is.read(b)) != -1) {
+                        fos.write(b);// 写入数据
+                    }
+                    is.close();
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             case R.id.button_upload_file:
                 fragmentHomeBinding.testLinearLayout.switchState();

@@ -1,3 +1,4 @@
 include ':drawer'
 include ':ZHtouchs'
+include ':myapplication'
 rootProject.name = "MyDemo"
