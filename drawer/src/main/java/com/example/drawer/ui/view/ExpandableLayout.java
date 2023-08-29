@@ -1,6 +1,7 @@
 package com.example.drawer.ui.view;
 
 import android.content.Context;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,6 +50,10 @@ public class ExpandableLayout extends LinearLayout implements Animation.Animatio
 
     private List datas;
 
+    private boolean isFixMode = false;
+
+    private int fixHeight = 0;
+
     public ExpandableLayout(Context context) {
         this(context, null);
     }
@@ -79,6 +84,10 @@ public class ExpandableLayout extends LinearLayout implements Animation.Animatio
         super.setOrientation(orientation);
     }
 
+    public void setFixMode(boolean fixMode) {
+        isFixMode = fixMode;
+    }
+
     public <T> void setViewList(List<T> list, @LayoutRes int layoutId, BiConsumer<ViewBinding, T> biConsumer) {
         if (list == null || list.isEmpty() || list.equals(datas)) {
             return;
@@ -88,8 +97,9 @@ public class ExpandableLayout extends LinearLayout implements Animation.Animatio
         totalSize = list.size();
         removeAllViews();
         final int padding = getContext().getResources().getDimensionPixelOffset(R.dimen.dp_4);
+        ViewDataBinding inflate = null;
         for (int i = 0; i < list.size(); i++) {
-            ViewDataBinding inflate = DataBindingUtil.inflate(LayoutInflater.from(getContext()), layoutId, this, false);
+            inflate = DataBindingUtil.inflate(LayoutInflater.from(getContext()), layoutId, this, false);
             biConsumer.accept(inflate, list.get(i));
             if (i == 0) {
                 inflate.getRoot().setPadding(0, 0, 0, padding);
@@ -98,8 +108,17 @@ public class ExpandableLayout extends LinearLayout implements Animation.Animatio
             } else {
                 inflate.getRoot().setPadding(0, padding, 0, padding);
             }
+            if (isFixMode) {
+                inflate.getRoot().measure(0, 0);
+                fixHeight = inflate.getRoot().getMeasuredHeight();
+                ZHLog.d(TAG, "fixHeight " + fixHeight);
+            }
             addView(inflate.getRoot());
         }
+
+        expandable = totalSize > MIN_COUNT;
+
+
     }
 
     public void switchState() {
@@ -109,11 +128,12 @@ public class ExpandableLayout extends LinearLayout implements Animation.Animatio
             return;
         }
         ExpandAbleAnimation animation;
+        int height = isFixMode ? fixHeight : itemHeight;
         ZHLog.d(TAG, "switchState " + collapsed);
         if (collapsed) {
-            animation = new ExpandAbleAnimation(MIN_COUNT * itemHeight, totalHeight);
+            animation = new ExpandAbleAnimation(MIN_COUNT * height, height * datas.size());
         } else {
-            animation = new ExpandAbleAnimation(totalHeight,MIN_COUNT * itemHeight );
+            animation = new ExpandAbleAnimation(height * datas.size(), MIN_COUNT * height);
         }
         clearAnimation();
         animation.setAnimationListener(this);
@@ -129,6 +149,36 @@ public class ExpandableLayout extends LinearLayout implements Animation.Animatio
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        if (isFixMode) {
+            long start = System.currentTimeMillis();
+            extracted1(widthMeasureSpec, heightMeasureSpec);
+            ZHLog.d(TAG, "onMeasure2 cost " + (System.currentTimeMillis() - start));
+        } else {
+            long start = System.currentTimeMillis();
+            extracted(widthMeasureSpec, heightMeasureSpec);
+            ZHLog.d(TAG, "onMeasure cost " + (System.currentTimeMillis() - start));
+        }
+
+    }
+
+    private void extracted1(int widthMeasureSpec, int heightMeasureSpec) {
+        if (isAnimating) {
+            super.onMeasure(widthMeasureSpec,heightMeasureSpec);
+            return;
+        }
+
+        if (!expandable) {
+            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), fixHeight * datas.size());
+            return;
+        }
+        if (collapsed) {
+            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), fixHeight * MIN_COUNT);
+        } else {
+            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), fixHeight * datas.size());
+        }
+    }
+
+    private void extracted(int widthMeasureSpec, int heightMeasureSpec) {
         if (totalSize == 0) {
             setVisibility(GONE);
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -144,7 +194,6 @@ public class ExpandableLayout extends LinearLayout implements Animation.Animatio
 
         totalHeight = getMeasuredHeight();
         itemHeight = totalHeight / totalSize;
-        expandable = totalSize > MIN_COUNT;
         ZHLog.d(TAG, "itemHeight " + itemHeight);
         ZHLog.d(TAG, "totalHeight " + totalHeight);
 

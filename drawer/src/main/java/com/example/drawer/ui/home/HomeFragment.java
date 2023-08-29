@@ -1,31 +1,28 @@
 package com.example.drawer.ui.home;
 
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.Transformation;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.slidingpanelayout.widget.SlidingPaneLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.example.domain.FeedReaderDbHelper;
 import com.example.drawer.R;
 import com.example.drawer.databinding.FragmentHomeBinding;
 import com.example.drawer.databinding.ItemTextOnlyBinding;
+import com.example.drawer.databinding.ItemTextOnlyBindingImpl;
 import com.example.drawer.ui.gallery.beans.ItemBean;
 import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.activity.BaseFragment;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,105 +39,86 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
     FeedReaderDbHelper dbHelper;
 
-    private final boolean isExpanded = false;
-
-    Handler looper;
-    private List<String> list;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                ZHLog.d(TAG, "onChanged" + s);
-            }
-        });
-        homeViewModel.setmText("Sadasdada");
+
         fragmentHomeBinding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = fragmentHomeBinding.getRoot();
         root.findViewById(R.id.button_get).setOnClickListener(this);
         root.findViewById(R.id.button_post).setOnClickListener(this);
         root.findViewById(R.id.button_upload_file).setOnClickListener(this);
         root.findViewById(R.id.button_download_file).setOnClickListener(this);
-        SlidingPaneLayout slidingPaneLayout = root.findViewById(R.id.slide);
-        slidingPaneLayout.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-        slidingPaneLayout.setParallaxDistance(getResources().getDimensionPixelOffset(R.dimen.dp_40));
         dbHelper = new FeedReaderDbHelper(getActivity());
-        addView(15);
+
+        ArrayList<ItemBean> arrayList1 = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            ItemBean bean = new ItemBean(String.valueOf(i), "" + new Random().nextFloat());
+
+            arrayList1.add(bean);
+        }
+        fragmentHomeBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()) );
+        fragmentHomeBinding.recyclerView.setAdapter(new RecyclerView.Adapter() {
+            @NonNull
+            @NotNull
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+                ItemTextOnlyBinding inflate = ItemTextOnlyBindingImpl.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+                return new MyViewHolder(inflate);
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position) {
+                MyViewHolder myViewHolder = (MyViewHolder) holder;
+                if (position >= 0 && position < arrayList1.size()) {
+                    myViewHolder.inflate.setTextViewEntry(arrayList1.get(position));
+                }
+                ZHLog.d(TAG, "onBindViewHolder  " + holder);
+            }
+
+            @Override
+            public int getItemCount() {
+                return arrayList1.size();
+            }
+        });
+
+        ItemTextOnlyBinding inflate = ItemTextOnlyBindingImpl.inflate(LayoutInflater.from(getContext()), null, false);
+        inflate.getRoot().measure(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        itemHeight = inflate.getRoot().getMeasuredHeight();
+        ViewGroup.LayoutParams layoutParams = fragmentHomeBinding.recyclerView.getLayoutParams();
+        layoutParams.height = itemHeight * 5;
+        totalHeight = itemHeight * arrayList1.size();
+        fragmentHomeBinding.recyclerView.setLayoutParams(layoutParams);
+        ZHLog.d(TAG, "totalHeight " + totalHeight + " itemHeight " + itemHeight);
         return root;
     }
 
-    private void addView(int size) {
-        ArrayList<ItemBean> arrayList = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            ItemBean bean = new ItemBean("6", "" + new Random().nextFloat());
-            arrayList.add(bean);
+    private int totalHeight;
+    private int itemHeight;
+
+    private static class MyViewHolder extends RecyclerView.ViewHolder {
+        ItemTextOnlyBinding inflate;
+
+        public MyViewHolder(ItemTextOnlyBinding itemView) {
+            super(itemView.getRoot());
+            inflate = itemView;
         }
-
-        fragmentHomeBinding.testLinearLayout.setViewList(arrayList, R.layout.item_text_only, (viewBinding, itemBean) -> {
-            if (viewBinding instanceof ItemTextOnlyBinding) {
-                ItemTextOnlyBinding textOnlyBinding = (ItemTextOnlyBinding) viewBinding;
-                textOnlyBinding.setTextViewEntry(itemBean);
-            }
-        });
     }
-
-    @Override
-    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-    }
-
-    public static String au = "com.example.myapplication.test";
-    public static String au2 = "com.example.myapplication.fileProvider";
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_get:
-                Bundle call = getActivity().getContentResolver().call(Uri.parse("content://" + au), "", "", null);
-                String string = call.getString(au);
-                Uri uri = Uri.parse(string);
-                MediaPlayer mediaPlayer = new MediaPlayer();
-                try {
-                    mediaPlayer.setDataSource(getActivity(), uri);
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                expand(fragmentHomeBinding.recyclerView);
+
                 break;
             case R.id.button_post:
-                Bundle call2 = getActivity().getContentResolver().call(Uri.parse("content://" + au), "", "", null);
-                String string2 = call2.getString(au);
-                ZHLog.d(TAG, "zhuhe " + string2);
-                try {
-                    InputStream is = getActivity().getContentResolver().openInputStream(Uri.parse(string2));
-                    File file = new File(getActivity().getFilesDir() + File.separator + "mp3.mp3");
-                    FileOutputStream fos = new FileOutputStream(file);
-                    byte[] b = new byte[1024];
-                    while ((is.read(b)) != -1) {
-                        fos.write(b);// 写入数据
-                    }
-                    is.close();
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                collapse(fragmentHomeBinding.recyclerView);
                 break;
             case R.id.button_upload_file:
-                fragmentHomeBinding.testLinearLayout.switchState();
 
                 break;
 
@@ -156,8 +134,46 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        ZHLog.d(TAG, "requestCode:" + requestCode + permissions[0]);
+    public void expand(final View view) {
+        view.getLayoutParams().height = 0;
+        view.setVisibility(View.VISIBLE);
+        fragmentHomeBinding.recyclerView.isAnimating = true;
+        Animation animation = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if (interpolatedTime == 1) {
+                    fragmentHomeBinding.recyclerView.isAnimating = false;
+                    view.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                } else {
+                    view.getLayoutParams().height = (int) (totalHeight * interpolatedTime);
+                }
+                ZHLog.d(TAG, "interpolatedTime " + interpolatedTime + " expand " + view.getHeight());
+                view.requestLayout();
+            }
+        };
+        animation.setDuration(1000);
+        animation.setInterpolator(new FastOutLinearInInterpolator());
+        view.startAnimation(animation);
+    }
+
+    public void collapse(final View view) {
+        fragmentHomeBinding.recyclerView.isAnimating = true;
+
+        Animation animation = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if (interpolatedTime == 1) {
+                    view.setVisibility(View.GONE);
+                    fragmentHomeBinding.recyclerView.isAnimating = false;
+                } else {
+                    view.getLayoutParams().height = totalHeight - (int) (totalHeight * interpolatedTime);
+                }
+                ZHLog.d(TAG, "collapse " + view.getHeight());
+                view.requestLayout();
+            }
+        };
+        animation.setDuration(1000);
+        animation.setInterpolator(new FastOutLinearInInterpolator());
+        view.startAnimation(animation);
     }
 }
