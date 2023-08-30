@@ -18,11 +18,14 @@ import com.example.drawer.databinding.FragmentHomeBinding;
 import com.example.drawer.databinding.ItemTextOnlyBinding;
 import com.example.drawer.databinding.ItemTextOnlyBindingImpl;
 import com.example.drawer.ui.gallery.beans.ItemBean;
+import com.example.drawer.ui.view.PoemContent;
 import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.activity.BaseFragment;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -58,7 +61,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
             arrayList1.add(bean);
         }
-        fragmentHomeBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()) );
+        fragmentHomeBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         fragmentHomeBinding.recyclerView.setAdapter(new RecyclerView.Adapter() {
             @NonNull
             @NotNull
@@ -93,6 +96,42 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         totalHeight = itemHeight * arrayList1.size();
         fragmentHomeBinding.recyclerView.setLayoutParams(layoutParams);
         ZHLog.d(TAG, "totalHeight " + totalHeight + " itemHeight " + itemHeight);
+
+        List<List<PoemContent>> list = new ArrayList<>();
+        list.add(Arrays.asList(new PoemContent("豫", "yù"),
+                new PoemContent("章", "zhānɡ"),
+                new PoemContent("故", "ɡù"),
+                new PoemContent("郡", "jùn"),
+                new PoemContent(",", "")));
+
+        list.add(Arrays.asList(new PoemContent("洪", "hónɡ"),
+                new PoemContent("都", "dū"),
+                new PoemContent("新", "xīn"),
+                new PoemContent("府", "fǔ"),
+                new PoemContent("，", "")));
+
+        list.add(Arrays.asList(new PoemContent("洪", "hónɡ"),
+                new PoemContent("都", "dū"),
+                new PoemContent("新", "xīn"),
+                new PoemContent("府", "fǔ"),
+                new PoemContent("府", "fǔ"),
+                new PoemContent("府", "fǔ"),
+                new PoemContent("府", "fǔ"),
+                new PoemContent("。", "")));
+
+        list.add(Arrays.asList(new PoemContent("洪", "hónɡ"),
+                new PoemContent("都", "dū"),
+                new PoemContent("都", "dū"),
+                new PoemContent("都", "dū"),
+                new PoemContent("新", "xīn"),
+                new PoemContent("府", "fǔ"),
+                new PoemContent(".", "")));
+
+        fragmentHomeBinding.pinyinview1.setList(list.get(0));
+        fragmentHomeBinding.pinyinview2.setList(list.get(1));
+        fragmentHomeBinding.pinyinview3.setList(list.get(2));
+        fragmentHomeBinding.pinyinview4.setList(list.get(3));
+
         return root;
     }
 

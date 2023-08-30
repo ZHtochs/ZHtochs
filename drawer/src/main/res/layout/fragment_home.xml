@@ -35,6 +35,7 @@
             android:layout_below="@id/button_upload_file"
             android:text="okhttp_download_file"/>
 
+
     <com.example.drawer.ui.view.MyRecyclerView
             android:layout_width="match_parent"
             android:id="@+id/recyclerView"
@@ -42,9 +43,44 @@
             android:layout_below="@+id/button_download_file"
             android:layout_height="wrap_content"/>
 
-    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+    <com.liwenwei.pinyintextview.PinyinTextView
+            android:id="@+id/ptv_content"
             android:layout_below="@+id/recyclerView"
-            android:text="@string/menu_home"/>
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+
+            app:textSize="26dp"/>
+
+    <com.liwenwei.pinyintextview.PinyinTextView
+            android:id="@+id/ptv_content2"
+            android:layout_below="@+id/ptv_content"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            app:textSize="26dp"/>
+
+    <com.example.drawer.ui.view.PinYinView
+            android:id="@+id/pinyinview1"
+            android:layout_below="@+id/ptv_content2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <com.example.drawer.ui.view.PinYinView
+            android:id="@+id/pinyinview2"
+            android:layout_below="@+id/pinyinview1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <com.example.drawer.ui.view.PinYinView
+            android:id="@+id/pinyinview3"
+            android:layout_below="@+id/pinyinview2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <com.example.drawer.ui.view.PinYinView
+            android:id="@+id/pinyinview4"
+            android:layout_below="@+id/pinyinview3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu xmlns:fab="http://schemas.android.com/apk/res-auto"

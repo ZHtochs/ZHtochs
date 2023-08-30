@@ -7,4 +7,9 @@
     <dimen name="slide_2">30dp</dimen>
     <dimen name="slide">150dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="cs_36_dp">36dp</dimen>
+    <dimen name="cs_100_dp">100dp</dimen>
+    <dimen name="cs_200_dp">200dp</dimen>
+    <dimen name="cs_18_dp">18dp</dimen>
+    <dimen name="cs_12_dp">12dp</dimen>
 </resources>
