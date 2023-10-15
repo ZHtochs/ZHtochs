@@ -1,6 +1,9 @@
 package com.example.drawer.ui.home;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +11,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,6 +27,8 @@ import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.activity.BaseFragment;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -77,7 +83,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
                 if (position >= 0 && position < arrayList1.size()) {
                     myViewHolder.inflate.setTextViewEntry(arrayList1.get(position));
                 }
-                ZHLog.d(TAG, "onBindViewHolder  " + holder);
             }
 
             @Override
@@ -151,14 +156,44 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_get:
-                expand(fragmentHomeBinding.recyclerView);
-
+                File zhuhe = getContext().getExternalFilesDir("zhuhe");
+                File cacheDir = getContext().getExternalCacheDir();
+                try {
+                    File file = new File(zhuhe, "zhuhe.text");
+                    file.createNewFile();
+                    File file2 = new File(cacheDir, "zhuhe.text");
+                    file2.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                ZHLog.d(TAG, "123");
                 break;
             case R.id.button_post:
-                collapse(fragmentHomeBinding.recyclerView);
+                ZHLog.d(TAG, Environment.getExternalStorageDirectory());
+                ZHLog.d(TAG, getContext().getExternalFilesDir("BaiduNetdisk"));
+                File file1 = new File("/sdcard/BaiduNetdisk/动漫/轻小说/人类衰退之后/资源来源.txt");
+                File file2 = new File("/sdcard/BaiduNetdisk/动漫/轻小说/人类衰退之后/人类衰退之后第七卷.docx");
+                ZHLog.d(TAG, "file1 " + file1.exists());
+                ZHLog.d(TAG, "file2 " + file2.exists());
+                Uri uriForFile = FileProvider.getUriForFile(getContext(), "com.example.myapplication.test", file1);
+                ZHLog.d(TAG, "uriForFile " + uriForFile);
+                Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setType("*/*");
+                ArrayList<Uri> arrayList = new ArrayList<>();
+                arrayList.add(FileProvider.getUriForFile(getContext(), "com.example.myapplication.test", file1));
+                arrayList.add(FileProvider.getUriForFile(getContext(), "com.example.myapplication.test", file2));
+                intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, arrayList);
+                startActivity(intent);
+
                 break;
             case R.id.button_upload_file:
-
+                File openFile = new File("/sdcard/BaiduNetdisk/动漫/轻小说/人类衰退之后/资源来源.txt");
+                Uri uriForFile1 = FileProvider.getUriForFile(getContext(), "com.example.myapplication.test", openFile);
+                Intent startIntent = new Intent(Intent.ACTION_VIEW);
+                startIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startIntent.setDataAndType(uriForFile1, "text/plain");
+                startActivity(startIntent);
                 break;
 
             case R.id.button_download_file:

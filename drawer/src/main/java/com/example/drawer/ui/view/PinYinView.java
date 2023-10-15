@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.Nullable;
 import com.example.drawer.R;
-import com.github.zhtouchs.Utils.ZHLog;
 import com.github.zhtouchs.ZHActivityManager;
 import com.google.gson.Gson;
 
@@ -83,7 +82,6 @@ public class PinYinView extends View {
         for (int i = 0; i < list.size(); i++) {
             PoemContent poemContent = list.get(i);
             int baseX = itemWidthHalf * (2 * i + 1) + paddingStart;
-            ZHLog.d(TAG, "baseX " + baseX + " " + gson.toJson(poemContent));
             if (i == list.size() - 1 && characters.contains(poemContent.pinyin) && TextUtils.isEmpty(poemContent.text)) {
                 canvas.drawText(poemContent.text, baseX - biaodiao, 50 + paddingTop, paint);
                 canvas.drawText(poemContent.pinyin, baseX - biaodiao, 100 + paddingTop, paint);
