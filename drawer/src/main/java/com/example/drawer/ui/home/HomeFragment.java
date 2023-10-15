@@ -1,5 +1,6 @@
 package com.example.drawer.ui.home;
 
+import android.Manifest;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,8 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
@@ -188,25 +192,42 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
                 break;
             case R.id.button_upload_file:
-                File openFile = new File("/sdcard/BaiduNetdisk/动漫/轻小说/人类衰退之后/资源来源.txt");
-                Uri uriForFile1 = FileProvider.getUriForFile(getContext(), "com.example.myapplication.test", openFile);
-                Intent startIntent = new Intent(Intent.ACTION_VIEW);
-                startIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startIntent.setDataAndType(uriForFile1, "text/plain");
-                startActivity(startIntent);
+                int read = getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+                int write = getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                ZHLog.e(TAG, "read " + write + " write " + write);
+                getActivity().requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+                read = getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+                write = getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                ZHLog.e(TAG, "read " + write + " write " + write);
                 break;
 
             case R.id.button_download_file:
-                ZHLog.d(TAG, "onClick");
-                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.view_anim);
-                animation.setFillAfter(true);
-                animation.setFillBefore(false);
-                fragmentHomeBinding.buttonDownloadFile.startAnimation(animation);
+                Intent image = null;
+                // 拍照
+//                Intent image = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                //  选择图片
+                //  Intent image = new Intent(Intent.ACTION_PICK);
+                //  image.setType( "image/*");
+
+//                Intent image = new Intent(Intent.ACTION_GET_CONTENT);
+//                image.setType("*/*");
+//                image.addCategory(Intent.CATEGORY_OPENABLE);
+
+                intentActivityResultLauncher.launch(image);
                 break;
             default:
                 break;
         }
     }
+
+    ActivityResultLauncher<Intent> intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            ZHLog.e(TAG, "onActivityResult");
+
+        }
+    });
 
     public void expand(final View view) {
         view.getLayoutParams().height = 0;
